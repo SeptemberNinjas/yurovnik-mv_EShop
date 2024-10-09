@@ -2,13 +2,15 @@
 {
     public class Product
     {
-        public int Id;
+        public int Id { get; }
 
-        public string Name;
+        public string Name { get; }
 
-        public decimal Price;
+        public decimal Price { get; set; }
 
-        public int Stock;
+        public int Stock { get; set; }
+
+        public string Description { get; set; }
 
         public Product(int id, string name, decimal price, int stock)
         {
