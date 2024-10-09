@@ -1,17 +1,13 @@
 ﻿using Core;
+using System.Text.Json;
 using EShop.Commands;
 
 namespace EShop
 {
     public class Program
     {
-        private static Product[] products = {
-            new(1, "")
-        };
-        private static Service[] services = { };
-
         public static void Main(string[] args)
-        {                  
+        {   
             Console.WriteLine("Программа: 'Интернет магазин'");
             DisplayCommandsCommand.Execute();
 
