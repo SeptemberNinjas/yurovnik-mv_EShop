@@ -1,5 +1,5 @@
 ﻿using Core;
-using System.Text.Json;
+using EShop.Data;
 using EShop.Commands;
 
 namespace EShop
@@ -7,7 +7,7 @@ namespace EShop
     public class Program
     {
         public static void Main(string[] args)
-        {   
+        {
             Console.WriteLine("Программа: 'Интернет магазин'");
             DisplayCommandsCommand.Execute();
 
@@ -42,6 +42,12 @@ namespace EShop
                     break;
                 case ExitCommand.Name:
                     ExitCommand.Execute();
+                    break;
+                case DisplayProductsCommand.Name:
+                    DisplayProductsCommand.Execute(args);
+                    break;
+                case DisplayServicesCommand.Name:
+                    DisplayServicesCommand.Execute(args);
                     break;
                 default:
                     Console.WriteLine("Ошибка: неизвестная команда");

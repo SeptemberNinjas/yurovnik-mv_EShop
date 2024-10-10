@@ -1,8 +1,8 @@
 ﻿namespace Core
 {
     public class Service    {
-        public int Id { get; }
-        public string Name { get; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public decimal Price { get; set; }
         public string Description { get; set; }
 
@@ -12,6 +12,15 @@
             Name = name;
             Price = price;
             Description = description;
+        }
+        public override string? ToString()
+        {
+            return
+                $"""
+                ID:{Id} {Name};
+                Описание:{Description};
+                Цена:{Price};
+                """;
         }
     }
 }
