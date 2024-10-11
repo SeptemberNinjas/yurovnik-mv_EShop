@@ -22,21 +22,21 @@ namespace EShop.Data
         {
             var result = new T[count];
             var jsonDataBase = File.ReadAllText(src);
-            var services = JsonSerializer.Deserialize<T[]>(jsonDataBase);
+            var items = JsonSerializer.Deserialize<T[]>(jsonDataBase);
 
-            if (services is null)
+            if (items is null)
             {
                 return result;
             }
             else if (count == 0)
             {
-                return services;
+                return items;
             }
             else
             {
                 for (int i = 0; i < count; i++)
                 {
-                    result[i] = services[i];
+                    result[i] = items[i];
                 }
             }
 
