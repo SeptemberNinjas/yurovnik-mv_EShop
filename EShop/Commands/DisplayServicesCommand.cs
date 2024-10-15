@@ -12,21 +12,20 @@ namespace EShop.Commands
             return "Показать услуги";
         }
 
-        public static void Execute(string[]? args)
+        public static string Execute(string[]? args)
         {
             if (args is null || args.Length == 0)
             {
-                PrintItems(Database.GetServices());
-                return;
+                return string.Join("\n", Database.GetServices().Select(item => item.ToString()).ToArray());
             }
 
             if (int.TryParse(args[0], out var count))
             {
-                PrintItems(Database.GetServices(count));
+                return string.Join("\n", Database.GetServices(count).Select(item => item.ToString()).ToArray());
             }
             else
             {
-                Console.WriteLine("Введенный параметр не является числом");
+                return "Введенный параметр не является числом";
             }
         }
 

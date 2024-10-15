@@ -12,30 +12,20 @@ namespace EShop.Commands
             return "Показать товары";
         }
 
-        public static void Execute(string[]? args)
+        public static string Execute(string[]? args)
         {
             if (args is null || args.Length == 0)
-            {
-                PrintItems(Database.GetProducts());
-                return;
+            {            
+                return string.Join("\n", Database.GetProducts().Select(item => item.ToString()).ToArray());
             }
 
             if (int.TryParse(args[0], out var count))
             {
-                PrintItems(Database.GetProducts(count));
+                return string.Join("\n", Database.GetProducts(count).Select(item => item.ToString()).ToArray());
             }
             else
             {
-                Console.WriteLine("Введенный параметр не является числом");
-            }
-        }
-
-        private static void PrintItems(Product[] items)
-        {
-            foreach (var item in items)
-            {
-                Console.WriteLine();
-                Console.WriteLine(item.ToString());
+                return "Введенный параметр не является числом";
             }
         }
     }

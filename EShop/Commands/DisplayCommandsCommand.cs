@@ -9,12 +9,14 @@
             return "Вывести список команд";
         }
 
-        public static void Execute()
+        public static string Execute()
         {
-            Console.WriteLine($"{DisplayCommandsCommand.Name} - {DisplayCommandsCommand.GetInfo()}");
-            Console.WriteLine($"{ExitCommand.Name} - {ExitCommand.GetInfo()}");
-            Console.WriteLine($"{DisplayServicesCommand.Name} - {DisplayServicesCommand.GetInfo()}");
-            Console.WriteLine($"{DisplayProductsCommand.Name} - {DisplayProductsCommand.GetInfo()}");
+            return string.Join("\n", new[] { 
+                $"{DisplayCommandsCommand.Name} - {DisplayCommandsCommand.GetInfo()}",
+                $"{ExitCommand.Name} - {ExitCommand.GetInfo()}",
+                $"{DisplayServicesCommand.Name} - {DisplayServicesCommand.GetInfo()}",
+                $"{DisplayProductsCommand.Name} - {DisplayProductsCommand.GetInfo()}"
+            });           
         }
     }
 }

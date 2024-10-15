@@ -9,9 +9,10 @@
             return "Выйти из прогараммы";
         }
 
-        public static void Execute()
+        public static string Execute()
         {
             Environment.Exit(0);
+            return string.Empty;
         }
     }
 }
