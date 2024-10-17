@@ -1,6 +1,6 @@
 ﻿namespace Core
 {
-    public class BasketLine
+    public class CartLine
     {
         private readonly Product? _product;
 
@@ -12,7 +12,7 @@
 
         public ItemTypes ItemType => _product is not null ? ItemTypes.Product : ItemTypes.Service;
 
-        string text => $"{_product?.Name ?? _service!.Name} | {_count}";
+        public string Text => $"{_product?.Name ?? _service!.Name} | {_count}";
 
 
         public int Count
@@ -29,13 +29,21 @@
             }
         }
 
-        public BasketLine(Product product, int requestedCount)
+        public decimal Price
+        {
+            get
+            {
+                return _service is not null ? _service.Price : _product!.Price;
+            }
+        }
+
+        public CartLine(Product product, int requestedCount)
         {
             _product = product;
             _count = requestedCount;
         }
 
-        public BasketLine(Service service)
+        public CartLine(Service service)
         {
             _service = service;
         }

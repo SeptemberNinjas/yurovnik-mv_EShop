@@ -1,4 +1,5 @@
 ﻿using System.Security.Principal;
+using System.Text;
 
 namespace Core
 {
@@ -6,32 +7,30 @@ namespace Core
     {
         public int Id { get; init; }
 
+        public int OrderSum { get; init; }
+
         public bool IsPaid { get; set; }
 
-        public Product[]? ProductList {  get; set; } 
+        public Product[]? ProductList { get; set; }
 
         public Service[]? ServiceList { get; set; }
 
-        public Order(Product[] products)
-        {
-            ProductList = products;
+        public Order(Cart cart)
+        {            
         }
 
-        public Order(Service[] services)
-        {
-            ServiceList = services;
-        }
 
         public override string? ToString()
         {
-            if (ProductList == null)
-            {
-                return string.Join("\n", ServiceList!.Select(item => item.ToString()).ToArray());
-            }
-            else
-            {
-                return string.Join("\n", ProductList.Select(item => item.ToString()).ToArray());
-            }
+            var sb = new StringBuilder();
+
+            if (ProductList != null)
+                sb.AppendLine(string.Join("\n", ProductList!.Select(item => item.ToString()).ToArray()));
+
+            if (ServiceList != null)
+                sb.AppendLine(string.Join("\n", ServiceList.Select(item => item.ToString()).ToArray()));
+
+            return sb.ToString();
         }
     }
 }

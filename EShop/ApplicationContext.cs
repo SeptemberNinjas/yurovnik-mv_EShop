@@ -1,9 +1,12 @@
-﻿using EShop.Commands;
+﻿using Core;
+using EShop.Commands;
 
 namespace EShop
 {
     public class ApplicationContext
     {
+
+        private Cart _cart = new();
         /// <summary>
         /// Заголовок приложения
         /// </summary>
@@ -29,6 +32,7 @@ namespace EShop
                 ExitCommand.Name => ExitCommand.Execute(),
                 DisplayProductsCommand.Name => DisplayProductsCommand.Execute(args),
                 DisplayServicesCommand.Name => DisplayServicesCommand.Execute(args),
+                DisplayCartCommand.Name => DisplayCartCommand.Execute(_cart),
                 var _ => "Неизвестаная команда"
             };
         }

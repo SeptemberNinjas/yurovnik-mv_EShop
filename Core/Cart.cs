@@ -1,31 +1,27 @@
 ﻿
+using System.Dynamic;
+using System.Text;
+
 namespace Core
 {
-    public class Basket
+    public class Cart
     {
-        private readonly List<BasketLine> _lines = new();
+        private readonly List<CartLine> _lines = new();
 
         public string AddLine(Product product, int requestedCount)
         {
             if (requestedCount < 1)
-            {
                 return "Запрашиваемое количество товара должно быть больше 0";
-            }
 
             if (product.Stock < requestedCount)
-            {
                 return $"Нельзя добавить товар в корзину, недостаточно остатков. Имеется {product.Stock}, Требуется {requestedCount}";
 
-            }
-
             product.Stock -= requestedCount;
-            if(IsLineExists(product, out var line))
-            {
+            if (IsLineExists(product, out var line))
                 line.Count += requestedCount;
-            } else
-            {
-                _lines.Add(new BasketLine(product, requestedCount));
-            }
+            else
+                _lines.Add(new CartLine(product, requestedCount));
+
 
             return $"В корзину добавлено {requestedCount} единиц товара \'{product.Name}\'";
         }
@@ -35,18 +31,17 @@ namespace Core
             if (IsLineExists(service, out var line))
                 return $"Ошибка при добавлении услуги. Услуга \'{service.Name}\' уже добавлена в корзину";
 
-            _lines.Add(new BasketLine(service));
+            _lines.Add(new CartLine(service));
             return $"В корзину добавлена услуга \'{service.Name}\'";
         }
 
-        private bool IsLineExists(Product product, out BasketLine line)
+        private bool IsLineExists(Product product, out CartLine line)
         {
             foreach (var item in _lines)
             {
                 if (item.ItemType != ItemTypes.Product || item.ItemId != product.Id)
-                {
                     continue;
-                }
+
                 line = item;
                 return true;
             }
@@ -55,20 +50,30 @@ namespace Core
             return false;
         }
 
-        private bool IsLineExists(Service service, out BasketLine line)
+        private bool IsLineExists(Service service, out CartLine line)
         {
             foreach (var item in _lines)
             {
                 if (item.ItemType != ItemTypes.Service || item.ItemId != service.Id)
-                {
                     continue;
-                }
+
                 line = item;
                 return true;
             }
 
             line = null;
             return false;
+        }
+
+        public override string ToString()
+        {
+
+            return new StringBuilder().AppendLine(string.Join(Environment.NewLine, _lines.Select(item => item.Text).ToArray())).AppendLine(GetSum().ToString()).ToString();
+        }
+
+        private decimal GetSum()
+        {
+            return _lines.Aggregate(0m, (acc, item) => acc += item.Price * item.Count);
         }
     }
 }

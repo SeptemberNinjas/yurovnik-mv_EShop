@@ -18,6 +18,18 @@ namespace EShop.Data
             return GetItems<Service>(count, ServicesSrc);
         }
 
+        public static Product GetProductById(int id)
+        {
+            var items = GetItems<Product>(0, ProductsSrc);
+            return items.Where(item => item.Id == id).ToArray()[0];
+        }
+
+        public static Service GetServiceById(int id)
+        {
+            var items = GetItems<Service>(0, ServicesSrc);
+            return items.Where(item => item.Id == id).ToArray()[0];
+        }
+
         private static T[] GetItems<T>(int count, string src)
         {
             var result = new T[count];
