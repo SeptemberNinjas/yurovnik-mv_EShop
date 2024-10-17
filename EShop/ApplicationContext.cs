@@ -32,7 +32,9 @@ namespace EShop
                 ExitCommand.Name => ExitCommand.Execute(),
                 DisplayProductsCommand.Name => DisplayProductsCommand.Execute(args),
                 DisplayServicesCommand.Name => DisplayServicesCommand.Execute(args),
-                DisplayCartCommand.Name => DisplayCartCommand.Execute(_cart),
+                DisplayCartCommand.Name => new DisplayCartCommand(_cart).Execute(),
+                AddServiceToCartCommand.Name => new AddServiceToCartCommand(_cart).Execute(args),
+                AddProductToCartCommand.Name => new AddProductToCartCommand(_cart).Execute(args),
                 var _ => "Неизвестаная команда"
             };
         }

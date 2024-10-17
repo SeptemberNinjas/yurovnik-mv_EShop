@@ -5,8 +5,8 @@ namespace EShop.Data
 {
     public static class Database
     {
-        private const string ProductsSrc = "D:\\dev\\C#\\EShop\\EShop\\Data\\Products.json";
-        private const string ServicesSrc = "D:\\dev\\C#\\EShop\\EShop\\Data\\Services.json";
+        private const string ProductsSrc = "Data\\Products.json";
+        private const string ServicesSrc = "Data\\Services.json";
 
         public static Product[] GetProducts(int count = 0)
         {
@@ -18,16 +18,22 @@ namespace EShop.Data
             return GetItems<Service>(count, ServicesSrc);
         }
 
-        public static Product GetProductById(int id)
+        public static Product? GetProductById(int id)
         {
             var items = GetItems<Product>(0, ProductsSrc);
-            return items.Where(item => item.Id == id).ToArray()[0];
+            var foundedProduct = items.Where(item => item.Id == id).ToArray();
+            if (foundedProduct.Length == 0)
+                return null;
+            return foundedProduct[0];
         }
 
-        public static Service GetServiceById(int id)
+        public static Service? GetServiceById(int id)
         {
             var items = GetItems<Service>(0, ServicesSrc);
-            return items.Where(item => item.Id == id).ToArray()[0];
+            var foundedService = items.Where(item => item.Id == id).ToArray();
+            if (foundedService.Length == 0)
+                return null;
+            return foundedService[0];
         }
 
         private static T[] GetItems<T>(int count, string src)

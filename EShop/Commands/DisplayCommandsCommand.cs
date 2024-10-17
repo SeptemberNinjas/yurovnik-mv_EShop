@@ -15,7 +15,10 @@
                 $"{DisplayCommandsCommand.Name} - {DisplayCommandsCommand.GetInfo()}",
                 $"{ExitCommand.Name} - {ExitCommand.GetInfo()}",
                 $"{DisplayServicesCommand.Name} - {DisplayServicesCommand.GetInfo()}",
-                $"{DisplayProductsCommand.Name} - {DisplayProductsCommand.GetInfo()}"
+                $"{DisplayProductsCommand.Name} - {DisplayProductsCommand.GetInfo()}",
+                $"{AddProductToCartCommand.Name} - {AddProductToCartCommand.GetInfo()}",
+                $"{AddServiceToCartCommand.Name} - {AddServiceToCartCommand.GetInfo()}",
+                $"{DisplayCartCommand.Name} - {DisplayCartCommand.GetInfo()}"
             });           
         }
     }

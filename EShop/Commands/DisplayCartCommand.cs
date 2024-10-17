@@ -9,6 +9,7 @@ namespace EShop.Commands
 {
     public class DisplayCartCommand
     {
+        private Cart _cart;
         public const string Name = "DisplayCart";
 
         public static string GetInfo()
@@ -16,9 +17,14 @@ namespace EShop.Commands
             return "Отобразить корзину покупок";
         }
 
-        public static string Execute(Cart cart)
+        public DisplayCartCommand(Cart cart)
         {
-            return cart.ToString();
+            _cart = cart;
+        }
+
+        public string Execute()
+        {
+            return _cart.ToString();
         }
     }
 }
