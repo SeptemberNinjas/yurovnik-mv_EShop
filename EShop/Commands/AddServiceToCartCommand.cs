@@ -30,7 +30,7 @@ namespace EShop.Commands
                 return "Не хватает аргументов ";
             }
 
-            if (int.TryParse(args[0], out var id) && int.TryParse(args[1], out var count))
+            if (int.TryParse(args[0], out var id))
             {
                 var item = Database.GetServiceById(id);
                 if (item is null)

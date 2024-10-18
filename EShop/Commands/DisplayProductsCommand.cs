@@ -16,12 +16,12 @@ namespace EShop.Commands
         {
             if (args is null || args.Length == 0)
             {            
-                return string.Join("\n", Database.GetProducts().Select(item => item.ToString()).ToArray());
+                return string.Join(Environment.NewLine, Database.GetProducts().Select(item => item.ToString()).ToArray());
             }
 
             if (int.TryParse(args[0], out var count))
             {
-                return string.Join("\n", Database.GetProducts(count).Select(item => item.ToString()).ToArray());
+                return string.Join(Environment.NewLine, Database.GetProducts(count).Select(item => item.ToString()).ToArray());
             }
             else
             {

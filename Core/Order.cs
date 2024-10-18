@@ -5,32 +5,37 @@ namespace Core
 {
     public class Order
     {
-        public int Id { get; init; }
+        private List<CartLine> _cartLines;
+
+        public Guid Id { get; init; }
 
         public int OrderSum { get; init; }
 
-        public bool IsPaid { get; set; }
+        public OrderStatus Status { get; set; }
 
-        public Product[]? ProductList { get; set; }
-
-        public Service[]? ServiceList { get; set; }
-
-        public Order(Cart cart)
-        {            
+        public Order(List<CartLine> cartLines)
+        {
+            Id = Guid.NewGuid();
+            _cartLines = cartLines;
+            Status = OrderStatus.New;
         }
-
 
         public override string? ToString()
         {
-            var sb = new StringBuilder();
+            decimal sum = 0;
+            var result = new StringBuilder($"Заказ: {Id}");
+            result.AppendLine($"{Environment.NewLine}Статус заказа: {Status}");
+            result.AppendLine("Состав заказ: ");
+            result.AppendLine("------------------------------------------");
+            foreach (var item in _cartLines)
+            {
+                result.AppendLine(item.ToString());
+                sum += item.Price;
+            }
+            result.AppendLine("------------------------------------------");
+            result.AppendLine($"Итого: {sum.ToString()}");
 
-            if (ProductList != null)
-                sb.AppendLine(string.Join("\n", ProductList!.Select(item => item.ToString()).ToArray()));
-
-            if (ServiceList != null)
-                sb.AppendLine(string.Join("\n", ServiceList.Select(item => item.ToString()).ToArray()));
-
-            return sb.ToString();
+            return result.ToString();
         }
     }
 }

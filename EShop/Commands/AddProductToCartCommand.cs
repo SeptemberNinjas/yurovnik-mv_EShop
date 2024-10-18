@@ -21,7 +21,7 @@ namespace EShop.Commands
 
         public string Execute(string[]? args)
         {
-            if (args is null || args.Length == 0)
+            if (args is null || args.Length < 2)
             {
                 return "Не хватает аргументов ";
             }

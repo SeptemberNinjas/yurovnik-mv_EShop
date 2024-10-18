@@ -8,6 +8,8 @@ namespace Core
     {
         private readonly List<CartLine> _lines = new();
 
+        public int Count {  get => _lines.Count; }
+
         public string AddLine(Product product, int requestedCount)
         {
             if (requestedCount < 1)
@@ -68,12 +70,19 @@ namespace Core
         public override string ToString()
         {
 
-            return new StringBuilder().AppendLine(string.Join(Environment.NewLine, _lines.Select(item => item.Text).ToArray())).AppendLine(GetSum().ToString()).ToString();
+            return new StringBuilder().AppendLine(string.Join(Environment.NewLine, _lines.Select(item => item.ToString()).ToArray())).AppendLine($"Итого: {GetSum().ToString()}").ToString();
         }
 
         private decimal GetSum()
         {
-            return _lines.Aggregate(0m, (acc, item) => acc += item.Price * item.Count);
+            return _lines.Aggregate(0m, (acc, item) => acc += item.Price);
+        }
+
+        public Order CreateOrderFromCart()
+        {
+            var newOrder = new Order(_lines.ToList());
+            _lines.Clear();
+            return newOrder;
         }
     }
 }

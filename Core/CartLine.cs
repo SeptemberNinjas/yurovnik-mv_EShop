@@ -12,9 +12,6 @@
 
         public ItemTypes ItemType => _product is not null ? ItemTypes.Product : ItemTypes.Service;
 
-        public string Text => $"{_product?.Name ?? _service!.Name} | {_count}";
-
-
         public int Count
         {
             get => _count;
@@ -33,7 +30,7 @@
         {
             get
             {
-                return _service is not null ? _service.Price : _product!.Price;
+                return _service is not null ? _service.Price : _product!.Price * Count;
             }
         }
 
@@ -46,6 +43,17 @@
         public CartLine(Service service)
         {
             _service = service;
+            _count = 1;
+        }
+
+        public override string? ToString()
+        {
+            if (_service == null)
+            {
+                return $"ID: {_product!.Id} Наименование: {_product!.Name} Количество: {Count} Сумма: {Price}";
+            }
+
+            return $"ID: {_service!.Id} Наименование: {_service!.Name} Сумма: {Price}";
         }
     }
 }
