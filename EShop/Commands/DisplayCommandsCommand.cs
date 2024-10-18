@@ -9,12 +9,19 @@
             return "Вывести список команд";
         }
 
-        public static void Execute()
+        public static string Execute()
         {
-            Console.WriteLine($"{DisplayCommandsCommand.Name} - {DisplayCommandsCommand.GetInfo()}");
-            Console.WriteLine($"{ExitCommand.Name} - {ExitCommand.GetInfo()}");
-            Console.WriteLine($"{DisplayServicesCommand.Name} - {DisplayServicesCommand.GetInfo()}");
-            Console.WriteLine($"{DisplayProductsCommand.Name} - {DisplayProductsCommand.GetInfo()}");
+            return string.Join(Environment.NewLine, new[] { 
+                $"{DisplayCommandsCommand.Name} - {DisplayCommandsCommand.GetInfo()}",
+                $"{ExitCommand.Name} - {ExitCommand.GetInfo()}",
+                $"{DisplayServicesCommand.Name} - {DisplayServicesCommand.GetInfo()}",
+                $"{DisplayProductsCommand.Name} - {DisplayProductsCommand.GetInfo()}",
+                $"{AddProductToCartCommand.Name} - {AddProductToCartCommand.GetInfo()}",
+                $"{AddServiceToCartCommand.Name} - {AddServiceToCartCommand.GetInfo()}",
+                $"{DisplayCartCommand.Name} - {DisplayCartCommand.GetInfo()}",
+                $"{CreateOrderCommand.Name} - {CreateOrderCommand.GetInfo()}",
+                $"{DisplayOrdersCommand.Name} - {DisplayOrdersCommand.GetInfo()}"
+            });           
         }
     }
 }

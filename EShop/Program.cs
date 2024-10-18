@@ -6,10 +6,12 @@ namespace EShop
 {
     public class Program
     {
+        private static readonly ApplicationContext App = new();
+
         public static void Main(string[] args)
         {
-            Console.WriteLine("Программа: 'Интернет магазин'");
-            DisplayCommandsCommand.Execute();
+            Console.WriteLine(ApplicationContext.Title);
+            Console.WriteLine(App.ExecuteStartupCommand());
 
             while (true)
             {
@@ -35,24 +37,7 @@ namespace EShop
                 args[i] = commandNameWithArgs[i + 1];
             }
 
-            switch (commandName)
-            {
-                case DisplayCommandsCommand.Name:
-                    DisplayCommandsCommand.Execute();
-                    break;
-                case ExitCommand.Name:
-                    ExitCommand.Execute();
-                    break;
-                case DisplayProductsCommand.Name:
-                    DisplayProductsCommand.Execute(args);
-                    break;
-                case DisplayServicesCommand.Name:
-                    DisplayServicesCommand.Execute(args);
-                    break;
-                default:
-                    Console.WriteLine("Ошибка: неизвестная команда");
-                    break;
-            }
+            Console.WriteLine(App.ExecuteCommandByName(commandName, args));
         }
     }
 }
