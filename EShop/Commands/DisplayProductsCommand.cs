@@ -5,37 +5,39 @@ namespace EShop.Commands
 {
     public static class DisplayProductsCommand
     {
+        /// <summary>
+        /// Имя команды
+        /// </summary>
         public const string Name = "DisplayProducts";
 
+        /// <summary>
+        /// Получить описание команды
+        /// </summary>
+        /// <returns></returns>
         public static string GetInfo()
         {
             return "Показать товары";
         }
 
-        public static void Execute(string[]? args)
+        /// <summary>
+        /// Выполнить команду
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static string Execute(string[]? args)
         {
             if (args is null || args.Length == 0)
-            {
-                PrintItems(Database.GetProducts());
-                return;
+            {            
+                return string.Join(Environment.NewLine, Database.GetProducts().Select(item => item.ToString()).ToArray());
             }
 
             if (int.TryParse(args[0], out var count))
             {
-                PrintItems(Database.GetProducts(count));
+                return string.Join(Environment.NewLine, Database.GetProducts(count).Select(item => item.ToString()).ToArray());
             }
             else
             {
-                Console.WriteLine("Введенный параметр не является числом");
-            }
-        }
-
-        private static void PrintItems(Product[] items)
-        {
-            foreach (var item in items)
-            {
-                Console.WriteLine();
-                Console.WriteLine(item.ToString());
+                return "Введенный параметр не является числом";
             }
         }
     }
