@@ -8,10 +8,19 @@
 
         private int _count;
 
+        /// <summary>
+        /// Идентификатор позиции в корзине
+        /// </summary>
         public int ItemId => _product?.Id ?? _service!.Id;
 
+        /// <summary>
+        /// Тип позиции в корзине
+        /// </summary>
         public ItemTypes ItemType => _product is not null ? ItemTypes.Product : ItemTypes.Service;
 
+        /// <summary>
+        /// Количество
+        /// </summary>
         public int Count
         {
             get => _count;
@@ -26,6 +35,9 @@
             }
         }
 
+        /// <summary>
+        /// Цена
+        /// </summary>
         public decimal Price
         {
             get
@@ -46,6 +58,10 @@
             _count = 1;
         }
 
+        /// <summary>
+        /// Текстовое представление позиции в корзине
+        /// </summary>
+        /// <returns></returns>
         public override string? ToString()
         {
             if (_service == null)

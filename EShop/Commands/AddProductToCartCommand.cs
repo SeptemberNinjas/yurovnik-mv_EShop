@@ -7,8 +7,16 @@ namespace EShop.Commands
     public class AddProductToCartCommand
     {
         private Cart _cart;
+
+        /// <summary>
+        /// Имя команды
+        /// </summary>
         public const string Name = "AddProductToCart";
 
+        /// <summary>
+        /// Получить описание команды
+        /// </summary>
+        /// <returns></returns>
         public static string GetInfo()
         {
             return "Добавить продукт в корзину";
@@ -19,6 +27,11 @@ namespace EShop.Commands
             _cart = cart;
         }
 
+        /// <summary>
+        /// Выполнить команду
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public string Execute(string[]? args)
         {
             if (args is null || args.Length < 2)
