@@ -46,7 +46,7 @@ namespace EShop.Commands
                 {
                     return "Товар не найден";
                 }
-                return _cart.AddLine(item, count);
+                return _cart.AddProduct(item, count);
             }
 
             return "Не корректный тип параметра";

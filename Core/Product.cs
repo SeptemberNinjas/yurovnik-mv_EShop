@@ -1,51 +1,31 @@
 ﻿namespace Core
 {
-    public class Product
+    public class Product : SaleItem
     {
-        /// <summary>
-        /// Идентификатор
-        /// </summary>
-        public int Id { get; init; }
-
-        /// <summary>
-        /// Наименование
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Цена
-        /// </summary>
-        public decimal Price { get; set; }
-
         /// <summary>
         /// Остатки
         /// </summary>
         public int Stock { get; set; }
 
         /// <summary>
-        /// Описание
+        /// Тип элемента
         /// </summary>
-        public string Description { get; set; }
+        public override ItemTypes ItemType => ItemTypes.Product;
 
-        public Product(int id, string name, decimal price, int stock, string description)
+        public Product(int id, string name, decimal price, int stock) : base(id, name, price)
         {
-            Id = id;
-            Name = name;
-            Price = price;
             Stock = stock;
-            Description = description;
         }
 
         /// <summary>
         /// Текстовое представление товара
         /// </summary>
         /// <returns></returns>
-        public override string? ToString()
+        public override string GetDisplayText()
         {
-            return 
+            return
                 $"""
                 ID:{Id} {Name};
-                Описание:{Description};
                 Цена:{Price} Остаток:{(Stock <= 0 ? "Нет на складе" : Stock)};
                 """;
         }

@@ -50,7 +50,7 @@ namespace EShop.Commands
                 {
                     return "Услуга не найдена";
                 }
-                return _cart.AddLine(item);
+                return _cart.AddService(item);
             }
 
             return "Не корректный тип параметра";
