@@ -1,5 +1,8 @@
 ﻿using Core;
-using EShop.Commands;
+using EShop.Commands.CartCommands;
+using EShop.Commands.CatalogCommands;
+using EShop.Commands.OrderCommands;
+using EShop.Commands.SystemCommands;
 
 namespace EShop
 {

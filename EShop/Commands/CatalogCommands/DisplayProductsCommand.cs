@@ -1,7 +1,7 @@
 ﻿using Core;
 using EShop.Data;
 
-namespace EShop.Commands
+namespace EShop.Commands.CatalogCommands
 {
     public static class DisplayProductsCommand
     {
@@ -27,7 +27,7 @@ namespace EShop.Commands
         public static string Execute(string[]? args)
         {
             if (args is null || args.Length == 0)
-            {            
+            {
                 return string.Join(Environment.NewLine, Database.GetProducts().Select(item => item.ToString()).ToArray());
             }
 

@@ -1,21 +1,17 @@
 ﻿using Core;
 using EShop.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace EShop.Commands
+
+namespace EShop.Commands.CartCommands
 {
-    public class AddServiceToCartCommand
+    public class AddProductToCartCommand
     {
         private Cart _cart;
 
         /// <summary>
         /// Имя команды
         /// </summary>
-        public const string Name = "AddServiceToCart";
+        public const string Name = "AddProductToCart";
 
         /// <summary>
         /// Получить описание команды
@@ -23,10 +19,10 @@ namespace EShop.Commands
         /// <returns></returns>
         public static string GetInfo()
         {
-            return "Добавить услугу в корзину";
+            return "Добавить продукт в корзину";
         }
 
-        public AddServiceToCartCommand(Cart cart)
+        public AddProductToCartCommand(Cart cart)
         {
             _cart = cart;
         }
@@ -38,22 +34,23 @@ namespace EShop.Commands
         /// <returns></returns>
         public string Execute(string[]? args)
         {
-            if (args is null || args.Length == 0)
+            if (args is null || args.Length < 2)
             {
                 return "Не хватает аргументов ";
             }
 
-            if (int.TryParse(args[0], out var id))
+            if (int.TryParse(args[0], out var id) && int.TryParse(args[1], out var count))
             {
-                var item = Database.GetServiceById(id);
+                var item = Database.GetProductById(id);
                 if (item is null)
                 {
-                    return "Услуга не найдена";
+                    return "Товар не найден";
                 }
-                return _cart.AddService(item);
+                return _cart.AddProduct(item, count);
             }
 
             return "Не корректный тип параметра";
+
         }
     }
 }

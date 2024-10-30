@@ -1,4 +1,8 @@
-﻿namespace EShop.Commands
+﻿using EShop.Commands.CartCommands;
+using EShop.Commands.CatalogCommands;
+using EShop.Commands.OrderCommands;
+
+namespace EShop.Commands.SystemCommands
 {
     public static class DisplayCommandsCommand
     {
@@ -22,8 +26,8 @@
         /// <returns></returns>
         public static string Execute()
         {
-            return string.Join(Environment.NewLine, new[] { 
-                $"{DisplayCommandsCommand.Name} - {DisplayCommandsCommand.GetInfo()}",
+            return string.Join(Environment.NewLine, new[] {
+                $"{Name} - {GetInfo()}",
                 $"{ExitCommand.Name} - {ExitCommand.GetInfo()}",
                 $"{DisplayServicesCommand.Name} - {DisplayServicesCommand.GetInfo()}",
                 $"{DisplayProductsCommand.Name} - {DisplayProductsCommand.GetInfo()}",
@@ -32,7 +36,7 @@
                 $"{DisplayCartCommand.Name} - {DisplayCartCommand.GetInfo()}",
                 $"{CreateOrderCommand.Name} - {CreateOrderCommand.GetInfo()}",
                 $"{DisplayOrdersCommand.Name} - {DisplayOrdersCommand.GetInfo()}"
-            });           
+            });
         }
     }
 }

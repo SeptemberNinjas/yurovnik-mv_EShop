@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EShop.Commands
+namespace EShop.Commands.CartCommands
 {
     public class DisplayCartCommand
     {

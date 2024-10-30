@@ -1,6 +1,7 @@
 ﻿using Core;
 using EShop.Data;
 using EShop.Commands;
+using EShop.Pages;
 
 namespace EShop
 {
@@ -10,6 +11,7 @@ namespace EShop
 
         public static void Main(string[] args)
         {
+            var mainPage = new MainWindow(ApplicationContext.Title, 100, 50);
             Console.WriteLine(ApplicationContext.Title);
             Console.WriteLine(App.ExecuteStartupCommand());
 

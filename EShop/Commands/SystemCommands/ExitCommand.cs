@@ -1,4 +1,4 @@
-﻿namespace EShop.Commands
+﻿namespace EShop.Commands.SystemCommands
 {
     public static class ExitCommand
     {

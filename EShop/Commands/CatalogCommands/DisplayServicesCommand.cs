@@ -1,7 +1,7 @@
 ﻿using Core;
 using EShop.Data;
 
-namespace EShop.Commands
+namespace EShop.Commands.CatalogCommands
 {
     public static class DisplayServicesCommand
     {

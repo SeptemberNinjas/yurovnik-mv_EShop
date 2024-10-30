@@ -1,7 +1,7 @@
 ﻿using Core;
 using EShop.Data;
 
-namespace EShop.Commands
+namespace EShop.Commands.OrderCommands
 {
     internal class CreateOrderCommand
     {
@@ -21,7 +21,7 @@ namespace EShop.Commands
         }
         public CreateOrderCommand(List<Order> orders)
         {
-            this._orders = orders;
+            _orders = orders;
         }
 
         /// <summary>
