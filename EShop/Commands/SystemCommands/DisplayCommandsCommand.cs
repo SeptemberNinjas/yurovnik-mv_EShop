@@ -4,7 +4,7 @@ using EShop.Commands.OrderCommands;
 
 namespace EShop.Commands.SystemCommands
 {
-    public static class DisplayCommandsCommand
+    public class DisplayCommandsCommand
     {
         /// <summary>
         /// Имя команды
@@ -15,7 +15,7 @@ namespace EShop.Commands.SystemCommands
         /// Получить описание команды
         /// </summary>
         /// <returns></returns>
-        public static string GetInfo()
+        public string GetInfo()
         {
             return "Вывести список команд";
         }
@@ -24,11 +24,11 @@ namespace EShop.Commands.SystemCommands
         /// Выполнить команду
         /// </summary>
         /// <returns></returns>
-        public static string Execute()
+        public string Execute()
         {
             return string.Join(Environment.NewLine, new[] {
                 $"{Name} - {GetInfo()}",
-                $"{ExitCommand.Name} - {ExitCommand.GetInfo()}",
+                $"{ExitCommand.Name} - {new ExitCommand().GetInfo()}",
                 $"{DisplayServicesCommand.Name} - {DisplayServicesCommand.GetInfo()}",
                 $"{DisplayProductsCommand.Name} - {DisplayProductsCommand.GetInfo()}",
                 $"{AddProductToCartCommand.Name} - {AddProductToCartCommand.GetInfo()}",

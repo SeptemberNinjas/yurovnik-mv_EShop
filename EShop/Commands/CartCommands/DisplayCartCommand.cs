@@ -1,4 +1,5 @@
 ﻿using Core;
+using EShop.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,13 +8,15 @@ using System.Threading.Tasks;
 
 namespace EShop.Commands.CartCommands
 {
-    public class DisplayCartCommand
+    public class DisplayCartCommand : ICommandExecutable, IDisplayable
     {
         private Cart _cart;
         /// <summary>
         /// Имя команды
         /// </summary>
         public const string Name = "DisplayCart";
+
+        public string? Result { get; private set; }
 
         /// <summary>
         /// Получить описание команды
@@ -33,9 +36,14 @@ namespace EShop.Commands.CartCommands
         /// Выполнить команду
         /// </summary>
         /// <returns></returns>
-        public string Execute()
+        public void Execute(string[]? args)
         {
-            return _cart.ToString();
+            Result = _cart.ToString();
+        }
+
+        public void Display()
+        {
+            Console.WriteLine(GetInfo());
         }
     }
 }

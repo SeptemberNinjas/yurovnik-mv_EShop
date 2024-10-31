@@ -1,14 +1,17 @@
 ﻿using Core;
 using EShop.Data;
+using EShop.Pages;
 
 namespace EShop.Commands.CatalogCommands
 {
-    public static class DisplayServicesCommand
+    public class DisplayServicesCommand : ICommandExecutable, IDisplayable
     {
         /// <summary>
         /// Имя команды
         /// </summary>
         public const string Name = "DisplayServices";
+
+        public string? Result { get; private set; }
 
         /// <summary>
         /// Получить описание команды
@@ -19,34 +22,42 @@ namespace EShop.Commands.CatalogCommands
             return "Показать услуги";
         }
 
+        public void Display()
+        {
+            Console.WriteLine(GetInfo());
+        }
+
         /// <summary>
         /// Выполнить команду
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static string Execute(string[]? args)
+        public void Execute(string[]? args)
         {
             if (args is null || args.Length == 0)
             {
-                return string.Join(Environment.NewLine, Database.GetServices().Select(item => item.ToString()).ToArray());
+                Result = string.Join(Environment.NewLine, Database.GetServices().Select(item => item.GetDisplayText()).ToArray());
+                return;
             }
 
             if (int.TryParse(args[0], out var count))
             {
-                return string.Join(Environment.NewLine, Database.GetServices(count).Select(item => item.ToString()).ToArray());
+                Result = string.Join(Environment.NewLine, Database.GetServices(count).Select(item => item.GetDisplayText()).ToArray());
+                return;
             }
             else
             {
-                return "Введенный параметр не является числом";
+                Result = "Введенный параметр не является числом";
+                return;
             }
         }
 
-        private static void PrintItems(Service[] items)
+        private void PrintItems(Service[] items)
         {
             foreach (var item in items)
             {
                 Console.WriteLine();
-                Console.WriteLine(item.ToString());
+                Console.WriteLine(item.GetDisplayText());
             }
         }
     }

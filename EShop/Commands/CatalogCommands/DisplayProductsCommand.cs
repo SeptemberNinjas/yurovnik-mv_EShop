@@ -1,14 +1,17 @@
 ﻿using Core;
 using EShop.Data;
+using EShop.Pages;
 
 namespace EShop.Commands.CatalogCommands
 {
-    public static class DisplayProductsCommand
+    public class DisplayProductsCommand : ICommandExecutable, IDisplayable
     {
         /// <summary>
         /// Имя команды
         /// </summary>
         public const string Name = "DisplayProducts";
+
+        public string? Result {get; private set;}
 
         /// <summary>
         /// Получить описание команды
@@ -19,25 +22,33 @@ namespace EShop.Commands.CatalogCommands
             return "Показать товары";
         }
 
+        public void Display()
+        {
+            Console.WriteLine(GetInfo());
+        }
+
         /// <summary>
         /// Выполнить команду
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static string Execute(string[]? args)
+        public void Execute(string[]? args)
         {
             if (args is null || args.Length == 0)
             {
-                return string.Join(Environment.NewLine, Database.GetProducts().Select(item => item.ToString()).ToArray());
+                Result = string.Join(Environment.NewLine, Database.GetProducts().Select(item => item.GetDisplayText()).ToArray());
+                return;
             }
 
             if (int.TryParse(args[0], out var count))
             {
-                return string.Join(Environment.NewLine, Database.GetProducts(count).Select(item => item.ToString()).ToArray());
+                Result = string.Join(Environment.NewLine, Database.GetProducts(count).Select(item => item.GetDisplayText()).ToArray());
+                return;
             }
             else
             {
-                return "Введенный параметр не является числом";
+                Result = "Введенный параметр не является числом";
+                return;
             }
         }
     }

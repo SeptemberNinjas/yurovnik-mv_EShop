@@ -1,13 +1,9 @@
 ﻿using Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EShop.Pages;
 
 namespace EShop.Commands.OrderCommands
 {
-    public class DisplayOrdersCommand
+    public class DisplayOrdersCommand : ICommandExecutable, IDisplayable
     {
         private readonly List<Order> _orders;
 
@@ -15,6 +11,8 @@ namespace EShop.Commands.OrderCommands
         /// Имя команды
         /// </summary>
         public const string Name = "DisplayOrders";
+
+        public string? Result { get; private set; }
 
         /// <summary>
         /// Получить описание команды
@@ -33,14 +31,21 @@ namespace EShop.Commands.OrderCommands
         /// Выполнить команду
         /// </summary>
         /// <returns></returns>
-        public string Execute()
+        public void Execute(string[]? args)
         {
             if (_orders is null || _orders.Count == 0)
             {
-                return "Заказов пока нет:(";
+                Result = "Заказов пока нет:(";
+                return;
             }
 
-            return string.Join(Environment.NewLine, _orders.Select(item => item.ToString()).ToArray());
+            Result = string.Join(Environment.NewLine, _orders.Select(item => item.ToString()).ToArray());
+            return;
+        }
+
+        public void Display()
+        {
+            Console.WriteLine(GetInfo());
         }
     }
 }

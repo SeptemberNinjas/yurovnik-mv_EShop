@@ -1,5 +1,6 @@
 ﻿using Core;
 using EShop.Data;
+using EShop.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EShop.Commands.CartCommands
 {
-    public class AddServiceToCartCommand
+    public class AddServiceToCartCommand : ICommandExecutable, IDisplayable
     {
         private Cart _cart;
 
@@ -16,6 +17,8 @@ namespace EShop.Commands.CartCommands
         /// Имя команды
         /// </summary>
         public const string Name = "AddServiceToCart";
+
+        public string? Result { get; private set; }
 
         /// <summary>
         /// Получить описание команды
@@ -36,11 +39,12 @@ namespace EShop.Commands.CartCommands
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public string Execute(string[]? args)
+        public void Execute(string[]? args)
         {
             if (args is null || args.Length == 0)
             {
-                return "Не хватает аргументов ";
+                Result = "Не хватает аргументов ";
+                return;
             }
 
             if (int.TryParse(args[0], out var id))
@@ -48,12 +52,19 @@ namespace EShop.Commands.CartCommands
                 var item = Database.GetServiceById(id);
                 if (item is null)
                 {
-                    return "Услуга не найдена";
+                    Result = "Услуга не найдена";
+                    return;
                 }
-                return _cart.AddService(item);
+                Result = _cart.AddService(item);
+                return;
             }
 
-            return "Не корректный тип параметра";
+            Result = "Не корректный тип параметра";
+        }
+
+        public void Display()
+        {
+            Console.WriteLine(GetInfo());
         }
     }
 }

@@ -7,7 +7,7 @@
 
         public string? Result => string.Empty;
 
-        public void Execute()
+        public void Execute(string[]? args)
         {
             throw new NotImplementedException();
         }

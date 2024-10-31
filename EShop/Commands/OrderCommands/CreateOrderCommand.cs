@@ -1,15 +1,19 @@
 ﻿using Core;
 using EShop.Data;
+using EShop.Pages;
 
 namespace EShop.Commands.OrderCommands
 {
-    internal class CreateOrderCommand
+    internal class CreateOrderCommand : ICommandExecutable, IDisplayable
     {
         private readonly List<Order> _orders;
+        private readonly Cart _cart;
         /// <summary>
         /// Имя команды
         /// </summary>
         public const string Name = "CreateOrder";
+
+        public string? Result {get; private set;}
 
         /// <summary>
         /// Получить описание команды
@@ -19,9 +23,10 @@ namespace EShop.Commands.OrderCommands
         {
             return "Создать заказ";
         }
-        public CreateOrderCommand(List<Order> orders)
+        public CreateOrderCommand(List<Order> orders, Cart cart)
         {
             _orders = orders;
+            _cart = cart;
         }
 
         /// <summary>
@@ -29,16 +34,23 @@ namespace EShop.Commands.OrderCommands
         /// </summary>
         /// <param name="cart"></param>
         /// <returns></returns>
-        public string Execute(Cart cart)
+        public void Execute(string[]? args)
         {
-            if (cart == null || cart.Count == 0)
+            if (_cart == null || _cart.Count == 0)
             {
-                return "Невозможно создать заказ. Корзина пуста";
+                Result = "Невозможно создать заказ. Корзина пуста";
+                return;
             }
 
-            _orders.Add(cart.CreateOrderFromCart());
+            _orders.Add(_cart.CreateOrderFromCart());
 
-            return "Заказ успешно создан";
+            Result = "Заказ успешно создан";
+            return;
+        }
+
+        public void Display()
+        {
+            Console.WriteLine(GetInfo());
         }
     }
 }

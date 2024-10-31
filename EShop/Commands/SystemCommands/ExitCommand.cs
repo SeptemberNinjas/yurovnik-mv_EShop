@@ -1,6 +1,8 @@
-﻿namespace EShop.Commands.SystemCommands
+﻿using EShop.Pages;
+
+namespace EShop.Commands.SystemCommands
 {
-    public static class ExitCommand
+    public class ExitCommand : ICommandExecutable, IDisplayable
     {
         /// <summary>
         /// Имя команды
@@ -8,22 +10,31 @@
         public const string Name = "Exit";
 
         /// <summary>
+        /// Результат
+        /// </summary>
+        public string? Result => string.Empty;
+
+        /// <summary>
         /// Получить описание команды
         /// </summary>
         /// <returns></returns>
-        public static string GetInfo()
+        public string GetInfo()
         {
-            return "Выйти из прогараммы";
+            return "Выйти из программы";
         }
 
         /// <summary>
         /// Выполнить команду
         /// </summary>
         /// <returns></returns>
-        public static string Execute()
+        public void Execute(string[]? args)
         {
             Environment.Exit(0);
-            return string.Empty;
+        }
+
+        public void Display()
+        {
+            Console.WriteLine(GetInfo());
         }
     }
 }

@@ -9,6 +9,6 @@ namespace EShop.Commands
     public interface ICommandExecutable
     {
         public string? Result { get; }
-        void Execute();
+        public void Execute(string[]? args);
     }
 }
