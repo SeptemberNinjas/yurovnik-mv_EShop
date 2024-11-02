@@ -1,8 +1,10 @@
 ﻿using Core;
+using Core.Payments;
 using EShop.Commands;
 using EShop.Commands.CartCommands;
 using EShop.Commands.CatalogCommands;
 using EShop.Commands.OrderCommands;
+using EShop.Commands.PaymentCommands;
 using EShop.Commands.SystemCommands;
 using EShop.Pages;
 using EShop.Pages.Components;
@@ -15,6 +17,7 @@ namespace EShop
 
         private readonly List<Order> _orders = new();
         private readonly Cart _cart = new();
+        private List<Payment> unpaidPayments= new();
         private MainPage? _mainPage;
         private UsersInput usersInput = new("Введите команду: ");
         private ResultField resultFiled = new("", ConsoleColor.DarkGray);
@@ -31,7 +34,7 @@ namespace EShop
             Console.SetWindowSize(width, height);
 
             commandList = new CommandsList(new List<IDisplayable>()
-            {
+            {           
                 (IDisplayable)CreateCommand(CommandType.DisplayProducts),
                 (IDisplayable)CreateCommand(CommandType.DisplayServices),
                 (IDisplayable)CreateCommand(CommandType.AddProductToCart),
@@ -39,6 +42,9 @@ namespace EShop
                 (IDisplayable)CreateCommand(CommandType.DisplayCart),
                 (IDisplayable)CreateCommand(CommandType.DisplayOrders),
                 (IDisplayable)CreateCommand(CommandType.CreateOrder),
+                (IDisplayable)CreateCommand(CommandType.CreatePayment),
+                (IDisplayable)CreateCommand(CommandType.MakePayment),
+                (IDisplayable)CreateCommand(CommandType.DisplayPayments),
                 (IDisplayable)CreateCommand(CommandType.Exit),
             });
 
@@ -53,6 +59,9 @@ namespace EShop
         {
             return commandType switch
             {
+                CommandType.CreatePayment => new CreatePaymentCommand(unpaidPayments, _orders),
+                CommandType.MakePayment => new MakePaymentCommand(unpaidPayments),
+                CommandType.DisplayPayments => new DisplayPaymentsCommand(unpaidPayments),
                 CommandType.DisplayCart => new DisplayCartCommand(_cart),
                 CommandType.DisplayServices => new DisplayServicesCommand(),
                 CommandType.DisplayProducts => new DisplayProductsCommand(),

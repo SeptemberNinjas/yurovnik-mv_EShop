@@ -20,8 +20,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\PaymentCommands\" />
-  </ItemGroup>
-
 </Project>

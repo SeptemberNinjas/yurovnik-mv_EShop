@@ -8,6 +8,9 @@ namespace EShop.Commands
 {
     public enum CommandType
     {
+        DisplayPayments,
+        MakePayment,
+        CreatePayment,
         DisplaySaleItems,
         DisplayProducts,
         DisplayServices,

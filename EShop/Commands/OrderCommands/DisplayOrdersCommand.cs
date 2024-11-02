@@ -43,6 +43,9 @@ namespace EShop.Commands.OrderCommands
             return;
         }
 
+        /// <summary>
+        /// Вывести на экран
+        /// </summary>
         public void Display()
         {
             Console.WriteLine(GetInfo());
