@@ -1,6 +1,6 @@
 ﻿namespace Core.Payments
 {
-    internal class CashPayment : Payment
+    public class CashPayment : Payment
     {
         /// <summary>
         /// Тип

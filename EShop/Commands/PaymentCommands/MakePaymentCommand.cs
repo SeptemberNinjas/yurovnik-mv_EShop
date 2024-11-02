@@ -58,10 +58,22 @@ namespace EShop.Commands.PaymentCommands
                 Result = "Оплата не найдена";
                 return;
             }
-      
+
+            //if (payment.PaymentType.Equals(PaymentType.cashless))
+            //{
+            //    var cashlessPayment = (CashlessPayment)payment;
+            //    cashlessPayment.Pay(out string response);
+            //    Result = response;
+            //}
+            //else 
+            //{
+            //    var cashPayment = (CashPayment)payment;
+            //    cashPayment.Pay(out string response);
+            //    Result = response;
+            //}
+
             payment.Pay(out string response);
             Result = response;
-
             _paymentList.Remove(payment);
         }
     }

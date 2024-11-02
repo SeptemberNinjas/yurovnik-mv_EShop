@@ -74,6 +74,9 @@ namespace EShop
             };
         }
 
+        /// <summary>
+        /// Запустить приложение
+        /// </summary>
         public void StartApp()
         {      
             var elements = new List<IDisplayable>()

@@ -32,7 +32,7 @@ namespace EShop.Commands.PaymentCommands
         /// <returns></returns>
         public static string GetInfo()
         {
-            return "Создать создать оплату";
+            return "Создать оплату";
         }
 
         /// <summary>

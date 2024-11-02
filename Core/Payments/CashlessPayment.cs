@@ -21,7 +21,7 @@
                 return false;
             }
 
-            if (Total > AmountReceived)
+            if (Total < AmountReceived)
             {
                 message = $"Внесите ровно {Total}, при безналичном платеже переплата не допускается. Транзакция отменена";
                 return false;
