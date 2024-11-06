@@ -1,4 +1,5 @@
-﻿using Core.Payments;
+﻿using Core;
+using Core.Payments;
 using EShop.Pages;
 
 namespace EShop.Commands.PaymentCommands
@@ -6,15 +7,17 @@ namespace EShop.Commands.PaymentCommands
     public class MakePaymentCommand : ICommandExecutable, IDisplayable
     {
         private List<Payment> _paymentList;
+        private List<Order> _orders;
 
         /// <summary>
         /// Результат
         /// </summary>
         public string? Result { get; private set; }
 
-        public MakePaymentCommand(List<Payment> payments)
+        public MakePaymentCommand(List<Payment> payments, List<Order> orders)
         {
             _paymentList = payments;
+            _orders = orders;
         }
 
         /// <summary>
@@ -59,22 +62,16 @@ namespace EShop.Commands.PaymentCommands
                 return;
             }
 
-            //if (payment.PaymentType.Equals(PaymentType.cashless))
-            //{
-            //    var cashlessPayment = (CashlessPayment)payment;
-            //    cashlessPayment.Pay(out string response);
-            //    Result = response;
-            //}
-            //else 
-            //{
-            //    var cashPayment = (CashPayment)payment;
-            //    cashPayment.Pay(out string response);
-            //    Result = response;
-            //}
-
             payment.Pay(out string response);
             Result = response;
             _paymentList.Remove(payment);
+            var order = _orders.FirstOrDefault(o => o.Id == orderId);
+            if (order is null)
+            {
+                Result = "Не удалось найти заказ";
+                return;
+            }
+            order.Status = OrderStatus.Paid;
         }
     }
 }

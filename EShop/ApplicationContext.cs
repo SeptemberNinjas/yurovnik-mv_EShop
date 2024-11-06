@@ -60,7 +60,7 @@ namespace EShop
             return commandType switch
             {
                 CommandType.CreatePayment => new CreatePaymentCommand(unpaidPayments, _orders),
-                CommandType.MakePayment => new MakePaymentCommand(unpaidPayments),
+                CommandType.MakePayment => new MakePaymentCommand(unpaidPayments, _orders),
                 CommandType.DisplayPayments => new DisplayPaymentsCommand(unpaidPayments),
                 CommandType.DisplayCart => new DisplayCartCommand(_cart),
                 CommandType.DisplayServices => new DisplayServicesCommand(),
