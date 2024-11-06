@@ -1,5 +1,7 @@
 ﻿using Core;
 using Core.Payments;
+using DAL;
+using DAL.JSON;
 using EShop.Commands;
 using EShop.Commands.CartCommands;
 using EShop.Commands.CatalogCommands;
@@ -8,13 +10,12 @@ using EShop.Commands.PaymentCommands;
 using EShop.Commands.SystemCommands;
 using EShop.Pages;
 using EShop.Pages.Components;
-using System.Xml.Linq;
 
 namespace EShop
 {
     public class ApplicationContext
     {
-
+        private RepositoryFactory _repositoryFactory;
         private readonly List<Order> _orders = new();
         private readonly Cart _cart = new();
         private List<Payment> unpaidPayments= new();
@@ -32,7 +33,7 @@ namespace EShop
         public ApplicationContext(int width, int height)
         {
             Console.SetWindowSize(width, height);
-
+            _repositoryFactory = new JsonRepositoryFactory();
             commandList = new CommandsList(new List<IDisplayable>()
             {           
                 (IDisplayable)CreateCommand(CommandType.DisplayProducts),
@@ -64,7 +65,7 @@ namespace EShop
                 CommandType.DisplayPayments => new DisplayPaymentsCommand(unpaidPayments),
                 CommandType.DisplayCart => new DisplayCartCommand(_cart),
                 CommandType.DisplayServices => new DisplayServicesCommand(),
-                CommandType.DisplayProducts => new DisplayProductsCommand(),
+                CommandType.DisplayProducts => new DisplayProductsCommand(_repositoryFactory.CreateProductFactory()),
                 CommandType.AddProductToCart => new AddProductToCartCommand(_cart),
                 CommandType.AddServiceToCart => new AddServiceToCartCommand(_cart),
                 CommandType.DisplayOrders => new DisplayOrdersCommand(_orders),

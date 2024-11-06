@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DAL.Memory
 {
-    internal class MemoryRepositoryFactory : RepositoryFactory
+    public class MemoryRepositoryFactory : RepositoryFactory
     {
         /// <summary>
         /// Создать Memory репозиторий для продкутов

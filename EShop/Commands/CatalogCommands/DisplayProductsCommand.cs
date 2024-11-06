@@ -1,11 +1,13 @@
 ﻿using Core;
 using EShop.Data;
 using EShop.Pages;
+using System.Text;
 
 namespace EShop.Commands.CatalogCommands
 {
     public class DisplayProductsCommand : ICommandExecutable, IDisplayable
     {
+        private IRepository<Product> _products;
         /// <summary>
         /// Имя команды
         /// </summary>
@@ -14,6 +16,11 @@ namespace EShop.Commands.CatalogCommands
         /// Результат
         /// </summary>
         public string? Result {get; private set;}
+
+        public DisplayProductsCommand(IRepository<Product> product)
+        {
+            _products = product;
+        }
 
         /// <summary>
         /// Получить описание команды
@@ -37,16 +44,26 @@ namespace EShop.Commands.CatalogCommands
         /// <param name="args"></param>
         /// <returns></returns>
         public void Execute(string[]? args)
-        {
+        {            
+            var sb = new StringBuilder();
+            var products = _products.GetAll();
             if (args is null || args.Length == 0)
             {
-                Result = string.Join(Environment.NewLine, Database.GetProducts().Select(item => item.GetDisplayText()).ToArray());
+                foreach (var item in products)
+                {
+                    sb.AppendLine(item.GetDisplayText());
+                }
+                Result = sb.ToString();
                 return;
             }
 
             if (int.TryParse(args[0], out var count))
-            {
-                Result = string.Join(Environment.NewLine, Database.GetProducts(count).Select(item => item.GetDisplayText()).ToArray());
+            {                
+                for (int i = 0; i < Math.Min(count, products.Count); i++)
+                {
+                    sb.AppendLine(products.ElementAt(i).GetDisplayText());
+                }
+                Result = sb.ToString();
                 return;
             }
             else
