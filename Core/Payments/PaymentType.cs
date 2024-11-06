@@ -8,7 +8,13 @@ namespace Core.Payments
 {
     public enum PaymentType
     {
+        /// <summary>
+        /// Наличный расчет
+        /// </summary>
         cash,
+        /// <summary>
+        /// Безналичный расчет
+        /// </summary>
         cashless
     }
 }

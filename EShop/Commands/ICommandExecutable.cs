@@ -7,8 +7,15 @@ using System.Threading.Tasks;
 namespace EShop.Commands
 {
     public interface ICommandExecutable
-    {
+    {   
+        /// <summary>
+        /// Результат
+        /// </summary>
         public string? Result { get; }
+        /// <summary>
+        /// Выполнить команду
+        /// </summary>
+        /// <param name="args"></param>
         public void Execute(string[]? args);
     }
 }

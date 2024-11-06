@@ -11,7 +11,9 @@ namespace EShop.Commands.OrderCommands
         /// Имя команды
         /// </summary>
         public const string Name = "DisplayOrders";
-
+        /// <summary>
+        /// Результат
+        /// </summary>
         public string? Result { get; private set; }
 
         /// <summary>

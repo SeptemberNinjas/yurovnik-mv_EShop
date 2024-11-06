@@ -15,7 +15,9 @@ namespace EShop.Pages
         {
             Elements = elements;
         }
-
+        /// <summary>
+        /// Вывести на экран
+        /// </summary>
         public void Display()
         {
             foreach (var element in Elements)

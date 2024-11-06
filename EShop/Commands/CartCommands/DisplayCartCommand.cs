@@ -15,7 +15,9 @@ namespace EShop.Commands.CartCommands
         /// Имя команды
         /// </summary>
         public const string Name = "DisplayCart";
-
+        /// <summary>
+        /// Реультат
+        /// </summary>
         public string? Result { get; private set; }
 
         /// <summary>
@@ -40,7 +42,9 @@ namespace EShop.Commands.CartCommands
         {
             Result = _cart.ToString();
         }
-
+        /// <summary>
+        /// Вывести на экран
+        /// </summary>
         public void Display()
         {
             Console.WriteLine(GetInfo());

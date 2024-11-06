@@ -18,6 +18,9 @@ namespace EShop.Commands.CartCommands
         /// </summary>
         public const string Name = "AddServiceToCart";
 
+        /// <summary>
+        /// Результат
+        /// </summary>
         public string? Result { get; private set; }
 
         /// <summary>
@@ -61,7 +64,9 @@ namespace EShop.Commands.CartCommands
 
             Result = "Не корректный тип параметра";
         }
-
+        /// <summary>
+        /// Вывести на экран
+        /// </summary>
         public void Display()
         {
             Console.WriteLine(GetInfo());

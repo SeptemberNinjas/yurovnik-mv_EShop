@@ -12,7 +12,9 @@ namespace EShop.Commands.OrderCommands
         /// Имя команды
         /// </summary>
         public const string Name = "CreateOrder";
-
+        /// <summary>
+        /// Результат
+        /// </summary>
         public string? Result {get; private set;}
 
         /// <summary>
@@ -47,7 +49,9 @@ namespace EShop.Commands.OrderCommands
             Result = "Заказ успешно создан";
             return;
         }
-
+        /// <summary>
+        /// Вывести на экран
+        /// </summary>
         public void Display()
         {
             Console.WriteLine(GetInfo());

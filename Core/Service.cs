@@ -7,6 +7,9 @@
         /// </summary>
         public override ItemTypes ItemType => ItemTypes.Service;
 
+        /// <summary>
+        /// Означает только 1 элемент
+        /// </summary>
         public override bool OnlyOneItem => true;
 
         public Service(int id, string name, decimal price) : base(id, name, price) { }

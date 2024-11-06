@@ -14,6 +14,9 @@ namespace EShop.Commands.CartCommands
         /// </summary>
         public const string Name = "AddProductToCart";
 
+        /// <summary>
+        /// Результат
+        /// </summary>
         public string? Result { get; private set; }
 
         /// <summary>
@@ -59,6 +62,9 @@ namespace EShop.Commands.CartCommands
 
         }
 
+        /// <summary>
+        /// Вывести на экран
+        /// </summary>
         public void Display()
         {
             Console.WriteLine(GetInfo());

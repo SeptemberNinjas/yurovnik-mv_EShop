@@ -7,7 +7,9 @@ namespace Core.Payments
     public class DisplayPaymentsCommand : ICommandExecutable, IDisplayable
     {
         private readonly List<Payment> _paymentsList;
-
+        /// <summary>
+        /// Результат
+        /// </summary>
         public string? Result { get; private set; }
 
         public DisplayPaymentsCommand(List<Payment> payments)

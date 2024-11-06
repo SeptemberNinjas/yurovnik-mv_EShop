@@ -10,7 +10,9 @@ namespace EShop.Commands.CatalogCommands
         /// Имя команды
         /// </summary>
         public const string Name = "DisplayProducts";
-
+        /// <summary>
+        /// Результат
+        /// </summary>
         public string? Result {get; private set;}
 
         /// <summary>
@@ -21,7 +23,9 @@ namespace EShop.Commands.CatalogCommands
         {
             return "Показать товары";
         }
-
+        /// <summary>
+        /// Вывести на экран
+        /// </summary>
         public void Display()
         {
             Console.WriteLine(GetInfo());
