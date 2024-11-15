@@ -1,4 +1,4 @@
-﻿using System.Security.Principal;
+﻿using Core.Payments;
 using System.Text;
 
 namespace Core
@@ -15,7 +15,7 @@ namespace Core
         /// <summary>
         /// Сумма заказа
         /// </summary>
-        public int OrderSum { get; init; }
+        public decimal OrderSum { get; init; }
 
         public OrderStatus Status { get; set; }
 
@@ -28,6 +28,7 @@ namespace Core
             Id = Guid.NewGuid();
             _cartLines = cartLines;
             Status = OrderStatus.New;
+            OrderSum = cartLines.Sum(cl => cl.Price);
         }
 
         /// <summary>
@@ -50,6 +51,22 @@ namespace Core
             result.AppendLine($"Итого: {sum.ToString()}");
 
             return result.ToString();
+        }
+
+        /// <summary>
+        /// Создает оплату из заказа
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public Payment createPaymentFromOrder(decimal amount, PaymentType type)
+        {
+            if (type.Equals(PaymentType.cash))
+            {
+                return new CashPayment(Id, OrderSum, amount);
+            }
+            
+            return new CashlessPayment(Id, OrderSum, amount);
         }
     }
 }

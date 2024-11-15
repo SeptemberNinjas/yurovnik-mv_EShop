@@ -1,45 +1,28 @@
 ﻿namespace Core
 {
-    public class Service    {
+    public class Service : SaleItem
+    {
+        /// <summary>
+        /// Тип элемента
+        /// </summary>
+        public override ItemTypes ItemType => ItemTypes.Service;
 
         /// <summary>
-        /// Идентификатор
+        /// Означает только 1 элемент
         /// </summary>
-        public int Id { get; init; }
+        public override bool OnlyOneItem => true;
 
-        /// <summary>
-        /// Наименование
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Цена
-        /// </summary>
-        public decimal Price { get; set; }
-
-        /// <summary>
-        /// Описание
-        /// </summary>
-        public string Description { get; set; }
-
-        public Service(int id, string name, decimal price, string description)
-        {
-            Id = id;
-            Name = name;
-            Price = price;
-            Description = description;
-        }
+        public Service(int id, string name, decimal price) : base(id, name, price) { }
 
         /// <summary>
         /// Текстовое представление услуги
         /// </summary>
         /// <returns></returns>
-        public override string? ToString()
+        public override string GetDisplayText()
         {
             return
                 $"""
                 ID:{Id} {Name};
-                Описание:{Description};
                 Цена:{Price};
                 """;
         }

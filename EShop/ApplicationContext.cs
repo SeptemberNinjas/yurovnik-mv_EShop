@@ -1,45 +1,140 @@
 ﻿using Core;
+using Core.Payments;
 using EShop.Commands;
+using EShop.Commands.CartCommands;
+using EShop.Commands.CatalogCommands;
+using EShop.Commands.OrderCommands;
+using EShop.Commands.PaymentCommands;
+using EShop.Commands.SystemCommands;
+using EShop.Pages;
+using EShop.Pages.Components;
+using System.Xml.Linq;
 
 namespace EShop
 {
     public class ApplicationContext
     {
 
-        private List<Order> _orders = new();
-        private Cart _cart = new();
+        private readonly List<Order> _orders = new();
+        private readonly Cart _cart = new();
+        private List<Payment> unpaidPayments= new();
+        private MainPage? _mainPage;
+        private UsersInput usersInput = new("Введите команду: ");
+        private ResultField resultFiled = new("", ConsoleColor.DarkGray);
+        private CommandsList commandList;
+        private ConsoleTextBox title = new("Интернет магазин", ConsoleColor.Green);
+
         /// <summary>
         /// Заголовок приложения
         /// </summary>
         public const string Title = "Интернет магазин";
 
-        /// <summary>
-        /// Выполнить стартовую команду
-        /// </summary>
-        /// <returns></returns>
-        public string ExecuteStartupCommand()
+        public ApplicationContext(int width, int height)
         {
-            return ExecuteCommandByName(DisplayCommandsCommand.Name);
+            Console.SetWindowSize(width, height);
+
+            commandList = new CommandsList(new List<IDisplayable>()
+            {           
+                (IDisplayable)CreateCommand(CommandType.DisplayProducts),
+                (IDisplayable)CreateCommand(CommandType.DisplayServices),
+                (IDisplayable)CreateCommand(CommandType.AddProductToCart),
+                (IDisplayable)CreateCommand(CommandType.AddServiceToCart),
+                (IDisplayable)CreateCommand(CommandType.DisplayCart),
+                (IDisplayable)CreateCommand(CommandType.DisplayOrders),
+                (IDisplayable)CreateCommand(CommandType.CreateOrder),
+                (IDisplayable)CreateCommand(CommandType.CreatePayment),
+                (IDisplayable)CreateCommand(CommandType.MakePayment),
+                (IDisplayable)CreateCommand(CommandType.DisplayPayments),
+                (IDisplayable)CreateCommand(CommandType.Exit),
+            });
+
         }
 
         /// <summary>
-        /// Выполнить команду по имени
+        /// Создать команду
         /// </summary>
-        public string ExecuteCommandByName(string commandName, string[]? args = null)
+        /// <param name="commandType"></param>
+        /// <returns></returns>
+        public ICommandExecutable CreateCommand(CommandType commandType)
         {
-            return commandName switch
+            return commandType switch
             {
-                DisplayCommandsCommand.Name => DisplayCommandsCommand.Execute(),
-                ExitCommand.Name => ExitCommand.Execute(),
-                DisplayProductsCommand.Name => DisplayProductsCommand.Execute(args),
-                DisplayServicesCommand.Name => DisplayServicesCommand.Execute(args),
-                DisplayCartCommand.Name => new DisplayCartCommand(_cart).Execute(),
-                AddServiceToCartCommand.Name => new AddServiceToCartCommand(_cart).Execute(args),
-                AddProductToCartCommand.Name => new AddProductToCartCommand(_cart).Execute(args),
-                CreateOrderCommand.Name => new CreateOrderCommand(_orders).Execute(_cart),
-                DisplayOrdersCommand.Name => new DisplayOrdersCommand(_orders).Execute(),
-                var _ => "Неизвестаная команда"
+                CommandType.CreatePayment => new CreatePaymentCommand(unpaidPayments, _orders),
+                CommandType.MakePayment => new MakePaymentCommand(unpaidPayments, _orders),
+                CommandType.DisplayPayments => new DisplayPaymentsCommand(unpaidPayments),
+                CommandType.DisplayCart => new DisplayCartCommand(_cart),
+                CommandType.DisplayServices => new DisplayServicesCommand(),
+                CommandType.DisplayProducts => new DisplayProductsCommand(),
+                CommandType.AddProductToCart => new AddProductToCartCommand(_cart),
+                CommandType.AddServiceToCart => new AddServiceToCartCommand(_cart),
+                CommandType.DisplayOrders => new DisplayOrdersCommand(_orders),
+                CommandType.CreateOrder => new CreateOrderCommand(_orders, _cart),
+                CommandType.Exit => new ExitCommand(),
+                _ => throw new NotSupportedException()
             };
+        }
+
+        /// <summary>
+        /// Запустить приложение
+        /// </summary>
+        public void StartApp()
+        {      
+            var elements = new List<IDisplayable>()
+            {
+               title,
+               commandList,
+               resultFiled,
+               usersInput,
+            };
+            _mainPage = new MainPage(elements);
+            LifeCycle();
+        }
+
+        private void LifeCycle()
+        {
+            while (true)
+            {
+                Draw();
+                Update();
+            }
+        }
+
+        private void Update()
+        {
+            var input = usersInput.Input;
+
+            if (string.IsNullOrEmpty(input))
+            {
+                Console.WriteLine("Ошибка: неизвестная команда");
+                return;
+            }
+
+            var commandNameWithArgs = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var commandName = commandNameWithArgs[0];
+            var args = new string[commandNameWithArgs.Length - 1];
+            for (var i = 0; i < args.Length; i++)
+            {
+                args[i] = commandNameWithArgs[i + 1];
+            }
+
+            if (!int.TryParse(commandName, out var commandNumber) || commandNumber > commandList?.Commands.Count)
+            {
+                Console.WriteLine("Неизвестная команда");
+                return;
+            }
+
+            var commnad = commandList!.Commands[commandNumber - 1] as ICommandExecutable;
+            commnad!.Execute(args);
+            if (commnad.Result is not null)
+            {
+                resultFiled.Text = commnad.Result;
+            }           
+        }
+
+        private void Draw()
+        {
+            Console.Clear();
+            _mainPage?.Display();
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Core
         /// <param name="product"></param>
         /// <param name="requestedCount"></param>
         /// <returns></returns>
-        public string AddLine(Product product, int requestedCount)
+        public string AddProduct(Product product, int requestedCount)
         {
             if (requestedCount < 1)
                 return "Запрашиваемое количество товара должно быть больше 0";
@@ -28,7 +28,7 @@ namespace Core
                 return $"Нельзя добавить товар в корзину, недостаточно остатков. Имеется {product.Stock}, Требуется {requestedCount}";
 
             product.Stock -= requestedCount;
-            if (TryGetLine(product, out var line))
+            if (TryGetLine(product, ItemTypes.Product, out var line))
                 line.Count += requestedCount;
             else
                 _lines.Add(new CartLine(product, requestedCount));
@@ -38,39 +38,24 @@ namespace Core
         }
 
         /// <summary>
-        /// Добавить услугу в корзину
+        /// Добавить Услугу в корзину
         /// </summary>
         /// <param name="service"></param>
         /// <returns></returns>
-        public string AddLine(Service service)
+        public string AddService(Service service)
         {
-            if (TryGetLine(service, out var line))
+            if (TryGetLine(service, ItemTypes.Service, out var line))
                 return $"Ошибка при добавлении услуги. Услуга \'{service.Name}\' уже добавлена в корзину";
 
-            _lines.Add(new CartLine(service));
+            _lines.Add(new CartLine(service, 1));
             return $"В корзину добавлена услуга \'{service.Name}\'";
         }
 
-        private bool TryGetLine(Product product, out CartLine line)
+        private bool TryGetLine(SaleItem itemLine, ItemTypes itemType, out CartLine line)
         {
             foreach (var item in _lines)
             {
-                if (item.ItemType != ItemTypes.Product || item.ItemId != product.Id)
-                    continue;
-
-                line = item;
-                return true;
-            }
-
-            line = null;
-            return false;
-        }
-
-        private bool TryGetLine(Service service, out CartLine line)
-        {
-            foreach (var item in _lines)
-            {
-                if (item.ItemType != ItemTypes.Service || item.ItemId != service.Id)
+                if (item.ItemType != itemType || item.ItemId != itemLine.Id)
                     continue;
 
                 line = item;
@@ -99,6 +84,10 @@ namespace Core
             return _lines.Sum(item => item.Price);
         }
 
+        /// <summary>
+        /// Создать новый заказ из корзины
+        /// </summary>
+        /// <returns></returns>
         public Order CreateOrderFromCart()
         {
             var newOrder = new Order(_lines.ToList());

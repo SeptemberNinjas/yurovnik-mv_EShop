@@ -1,10 +1,11 @@
 ﻿using Core;
 using EShop.Data;
-     
+using EShop.Pages;
 
-namespace EShop.Commands
+
+namespace EShop.Commands.CartCommands
 {
-    public class AddProductToCartCommand
+    public class AddProductToCartCommand : ICommandExecutable, IDisplayable
     {
         private Cart _cart;
 
@@ -12,6 +13,11 @@ namespace EShop.Commands
         /// Имя команды
         /// </summary>
         public const string Name = "AddProductToCart";
+
+        /// <summary>
+        /// Результат
+        /// </summary>
+        public string? Result { get; private set; }
 
         /// <summary>
         /// Получить описание команды
@@ -32,25 +38,36 @@ namespace EShop.Commands
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public string Execute(string[]? args)
+        public void Execute(string[]? args)
         {
             if (args is null || args.Length < 2)
             {
-                return "Не хватает аргументов ";
+                Result = "Не хватает аргументов ";
+                return;
             }
 
-            if (int.TryParse(args[0], out var id) && int.TryParse(args[1], out var count)) 
+            if (int.TryParse(args[0], out var id) && int.TryParse(args[1], out var count))
             {
                 var item = Database.GetProductById(id);
                 if (item is null)
                 {
-                    return "Товар не найден";
+                    Result = "Товар не найден";
+                    return;
                 }
-                return _cart.AddLine(item, count);
+                Result = _cart.AddProduct(item, count);
+                return;
             }
 
-            return "Не корректный тип параметра";
-            
+            Result = "Не корректный тип параметра";
+
+        }
+
+        /// <summary>
+        /// Вывести на экран
+        /// </summary>
+        public void Display()
+        {
+            Console.WriteLine(GetInfo());
         }
     }
 }

@@ -2,21 +2,19 @@
 {
     public class CartLine
     {
-        private readonly Product? _product;
-
-        private readonly Service? _service;
+        private readonly SaleItem _saleItem;
 
         private int _count;
 
         /// <summary>
         /// Идентификатор позиции в корзине
         /// </summary>
-        public int ItemId => _product?.Id ?? _service!.Id;
+        public int ItemId => _saleItem.Id;
 
         /// <summary>
         /// Тип позиции в корзине
         /// </summary>
-        public ItemTypes ItemType => _product is not null ? ItemTypes.Product : ItemTypes.Service;
+        public ItemTypes ItemType => _saleItem.ItemType;
 
         /// <summary>
         /// Количество
@@ -26,7 +24,7 @@
             get => _count;
             set
             {
-                if (_service is not null || value < 1)
+                if (_saleItem.OnlyOneItem || value < 1)
                 {
                     return;
                 }
@@ -42,34 +40,20 @@
         {
             get
             {
-                return _service is not null ? _service.Price : _product!.Price * Count;
+                return _saleItem.OnlyOneItem ? _saleItem.Price : _saleItem.Price * Count;
             }
         }
 
-        public CartLine(Product product, int requestedCount)
+        public CartLine(SaleItem item, int requestedCount)
         {
-            _product = product;
+            _saleItem = item;
             _count = requestedCount;
-        }
-
-        public CartLine(Service service)
-        {
-            _service = service;
-            _count = 1;
         }
 
         /// <summary>
         /// Текстовое представление позиции в корзине
         /// </summary>
         /// <returns></returns>
-        public override string? ToString()
-        {
-            if (_service == null)
-            {
-                return $"ID: {_product!.Id} Наименование: {_product!.Name} Количество: {Count} Сумма: {Price}";
-            }
-
-            return $"ID: {_service!.Id} Наименование: {_service!.Name} Сумма: {Price}";
-        }
+        public override string? ToString() => $"ID: {_saleItem!.Id} Наименование: {_saleItem!.Name} Количество: {Count} Сумма: {Price}";
     }
 }
