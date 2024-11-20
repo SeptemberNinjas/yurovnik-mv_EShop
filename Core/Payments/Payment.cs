@@ -5,7 +5,7 @@
         /// <summary>
         /// Id оплаты
         /// </summary>
-        public Guid OrderId { get; init; }
+        public int OrderId { get; init; }
         /// <summary>
         /// Общая сумма оплаты
         /// </summary>
@@ -20,7 +20,7 @@
         /// </summary>
         public virtual PaymentType PaymentType { get; }
 
-        public Payment(Guid orderId, decimal total, decimal amountReceived)
+        public Payment(int orderId, decimal total, decimal amountReceived)
         {
             OrderId = orderId;
             Total = total;

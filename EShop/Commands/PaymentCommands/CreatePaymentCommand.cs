@@ -1,5 +1,6 @@
 ﻿using Core;
 using Core.Payments;
+using DAL;
 using EShop.Pages;
 
 namespace EShop.Commands.PaymentCommands
@@ -8,7 +9,7 @@ namespace EShop.Commands.PaymentCommands
     {
 
         private List<Payment> _paymentList;
-        private List<Order> _orders;
+        private IRepository<Order> _orders;
 
         /// <summary>
         /// Наименование
@@ -20,10 +21,10 @@ namespace EShop.Commands.PaymentCommands
         /// </summary>
         public string? Result { get; private set; }
 
-        public CreatePaymentCommand(List<Payment> payments, List<Order> orders)
+        public CreatePaymentCommand(RepositoryFactory repositoryFactory, List<Payment> payments)
         {
             _paymentList = payments;
-            _orders = orders;
+            _orders = repositoryFactory.CreateOrderFactory();
         }
 
         /// <summary>
@@ -50,9 +51,9 @@ namespace EShop.Commands.PaymentCommands
         /// <param name="args"></param>
         public void Execute(string[]? args)
         {
-            if (args is null || args.Length == 0)
+            if (args is null || args.Length == 0 || args.Length < 3)
             {
-                Result = "Не передано ни одно аргумента";
+                Result = "Передано не корректное количество параметров";
                 return;
             }
 

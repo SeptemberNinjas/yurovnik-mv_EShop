@@ -1,9 +1,12 @@
 ﻿namespace Core
 {
-    public interface IRepository<T>
+    public interface IRepository<T> : IReadOnlyRepository<T>
     {
-        IReadOnlyCollection<T> GetAll();
-        int GetCount();
-        T? GetById(int id);
+        int Insert(T item);
+
+        void Update(T item);
+
+        Task InsertAsync();
+        Task UpdateAsync();
     }
 }

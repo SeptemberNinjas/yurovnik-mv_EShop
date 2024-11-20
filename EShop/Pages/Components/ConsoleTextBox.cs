@@ -12,7 +12,7 @@ namespace EShop.Pages.Components
         /// </summary>
         public string Text
         {
-            get { return _text; }
+            get { return _text!; }
             set { _text = value; }
         }
 
@@ -43,7 +43,7 @@ namespace EShop.Pages.Components
             var vertical = "║";
             var horizontal = "═";
 
-            var lines = _text.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            var lines = _text!.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
             var longest = 0;
             foreach (string line in lines)

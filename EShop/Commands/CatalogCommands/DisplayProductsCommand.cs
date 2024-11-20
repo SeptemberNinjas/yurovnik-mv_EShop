@@ -1,5 +1,5 @@
 ﻿using Core;
-using EShop.Data;
+using DAL;
 using EShop.Pages;
 using System.Text;
 
@@ -17,9 +17,9 @@ namespace EShop.Commands.CatalogCommands
         /// </summary>
         public string? Result {get; private set;}
 
-        public DisplayProductsCommand(IRepository<Product> product)
+        public DisplayProductsCommand(RepositoryFactory repositoryFactory)
         {
-            _products = product;
+            _products = repositoryFactory.CreateProductFactory();
         }
 
         /// <summary>

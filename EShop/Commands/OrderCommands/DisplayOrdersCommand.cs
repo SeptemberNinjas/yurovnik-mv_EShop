@@ -1,11 +1,12 @@
 ﻿using Core;
+using DAL;
 using EShop.Pages;
 
 namespace EShop.Commands.OrderCommands
 {
     public class DisplayOrdersCommand : ICommandExecutable, IDisplayable
     {
-        private readonly List<Order> _orders;
+        private IRepository<Order> _orders;
 
         /// <summary>
         /// Имя команды
@@ -24,9 +25,9 @@ namespace EShop.Commands.OrderCommands
         {
             return "Показать все заказы";
         }
-        public DisplayOrdersCommand(List<Order> orders)
+        public DisplayOrdersCommand(RepositoryFactory repositoryFactory)
         {
-            _orders = orders;
+            _orders = repositoryFactory.CreateOrderFactory();
         }
 
         /// <summary>
@@ -35,13 +36,13 @@ namespace EShop.Commands.OrderCommands
         /// <returns></returns>
         public void Execute(string[]? args)
         {
-            if (_orders is null || _orders.Count == 0)
+            if (_orders is null || _orders.GetCount() == 0)
             {
                 Result = "Заказов пока нет:(";
                 return;
             }
 
-            Result = string.Join(Environment.NewLine, _orders.Select(item => item.ToString()).ToArray());
+            Result = string.Join(Environment.NewLine, _orders.GetAll().Select(item => item.ToString()).ToArray());
             return;
         }
 

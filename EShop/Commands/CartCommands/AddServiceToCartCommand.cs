@@ -1,17 +1,14 @@
 ﻿using Core;
-using EShop.Data;
+using DAL;
 using EShop.Pages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace EShop.Commands.CartCommands
 {
     public class AddServiceToCartCommand : ICommandExecutable, IDisplayable
     {
-        private Cart _cart;
+        private IRepository<Service> _serviceRepo;
+        private IRepository<Cart> _cartRepo;
 
         /// <summary>
         /// Имя команды
@@ -32,9 +29,10 @@ namespace EShop.Commands.CartCommands
             return "Добавить услугу в корзину";
         }
 
-        public AddServiceToCartCommand(Cart cart)
+        public AddServiceToCartCommand(RepositoryFactory repositoryFactory)
         {
-            _cart = cart;
+            _cartRepo = repositoryFactory.CreateCartFactory();
+            _serviceRepo = repositoryFactory.CreateServiceFactory();
         }
 
         /// <summary>
@@ -52,13 +50,15 @@ namespace EShop.Commands.CartCommands
 
             if (int.TryParse(args[0], out var id))
             {
-                var item = Database.GetServiceById(id);
+                var cart = _cartRepo.GetAll().FirstOrDefault() ?? new Cart();
+                var item = _serviceRepo.GetById(id);
                 if (item is null)
                 {
                     Result = "Услуга не найдена";
                     return;
                 }
-                Result = _cart.AddService(item);
+                Result = cart.AddService(item);
+                _cartRepo.Insert(cart);
                 return;
             }
 

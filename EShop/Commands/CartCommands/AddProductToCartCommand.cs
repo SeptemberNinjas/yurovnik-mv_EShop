@@ -1,5 +1,5 @@
 ﻿using Core;
-using EShop.Data;
+using DAL;
 using EShop.Pages;
 
 
@@ -7,7 +7,8 @@ namespace EShop.Commands.CartCommands
 {
     public class AddProductToCartCommand : ICommandExecutable, IDisplayable
     {
-        private Cart _cart;
+        private IRepository<Product> _productRepo;
+        private IRepository<Cart> _cartRepo;
 
         /// <summary>
         /// Имя команды
@@ -28,9 +29,10 @@ namespace EShop.Commands.CartCommands
             return "Добавить продукт в корзину";
         }
 
-        public AddProductToCartCommand(Cart cart)
+        public AddProductToCartCommand(RepositoryFactory repositoryFactory)
         {
-            _cart = cart;
+            _cartRepo = repositoryFactory.CreateCartFactory();
+            _productRepo = repositoryFactory.CreateProductFactory();
         }
 
         /// <summary>
@@ -48,13 +50,15 @@ namespace EShop.Commands.CartCommands
 
             if (int.TryParse(args[0], out var id) && int.TryParse(args[1], out var count))
             {
-                var item = Database.GetProductById(id);
+                var cart = _cartRepo.GetAll().FirstOrDefault() ?? new Cart();
+                var item = _productRepo.GetById(id);
                 if (item is null)
                 {
                     Result = "Товар не найден";
                     return;
                 }
-                Result = _cart.AddProduct(item, count);
+                Result = cart.AddProduct(item, count);
+                _cartRepo.Insert(cart);
                 return;
             }
 

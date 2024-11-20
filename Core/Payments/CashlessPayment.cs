@@ -7,7 +7,7 @@
         /// </summary>
         public override PaymentType PaymentType => PaymentType.cashless;
 
-        public CashlessPayment(Guid orderId, decimal total, decimal amountReceived) : base(orderId, total, amountReceived) {}
+        public CashlessPayment(int orderId, decimal total, decimal amountReceived) : base(orderId, total, amountReceived) {}
 
         /// <summary>
         /// Валидация оплаты

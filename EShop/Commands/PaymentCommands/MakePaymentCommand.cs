@@ -49,7 +49,7 @@ namespace EShop.Commands.PaymentCommands
                 return;
             }
 
-            if (!Guid.TryParse(args[0], out Guid orderId))
+            if (!int.TryParse(args[0], out int orderId))
             {
                 Result = "Некорректно указан id заказа";
                 return;

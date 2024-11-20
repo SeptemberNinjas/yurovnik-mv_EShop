@@ -1,7 +1,4 @@
-﻿using Core;
-using EShop.Data;
-using EShop.Commands;
-using EShop.Pages;
+﻿using Microsoft.Extensions.Configuration;
 
 namespace EShop
 {
@@ -9,7 +6,10 @@ namespace EShop
     {
         public static void Main(string[] args)
         {
-            var application = new ApplicationContext(100, 50);
+            var confBuilder = new ConfigurationBuilder()
+               .AddJsonFile("appsettings.json", optional: false)
+               .Build();
+            var application = new ApplicationContext(100, 50, confBuilder);
             application.StartApp();           
         }
     }

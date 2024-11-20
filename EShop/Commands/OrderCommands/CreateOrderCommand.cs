@@ -1,13 +1,13 @@
 ﻿using Core;
-using EShop.Data;
+using DAL;
 using EShop.Pages;
 
 namespace EShop.Commands.OrderCommands
 {
     internal class CreateOrderCommand : ICommandExecutable, IDisplayable
     {
-        private readonly List<Order> _orders;
-        private readonly Cart _cart;
+        private IRepository<Order> _orders;
+        private IRepository<Cart> _cartRepo;
         /// <summary>
         /// Имя команды
         /// </summary>
@@ -25,10 +25,10 @@ namespace EShop.Commands.OrderCommands
         {
             return "Создать заказ";
         }
-        public CreateOrderCommand(List<Order> orders, Cart cart)
+        public CreateOrderCommand(RepositoryFactory repositoryFactory)
         {
-            _orders = orders;
-            _cart = cart;
+            _orders = repositoryFactory.CreateOrderFactory();
+            _cartRepo = repositoryFactory.CreateCartFactory();
         }
 
         /// <summary>
@@ -38,13 +38,14 @@ namespace EShop.Commands.OrderCommands
         /// <returns></returns>
         public void Execute(string[]? args)
         {
-            if (_cart == null || _cart.Count == 0)
+            var cart = _cartRepo.GetAll().FirstOrDefault() ?? new Cart();
+            if (cart == null || cart.Count == 0)
             {
                 Result = "Невозможно создать заказ. Корзина пуста";
                 return;
             }
 
-            _orders.Add(_cart.CreateOrderFromCart());
+            _orders.Insert(cart.CreateOrderFromCart());          
 
             Result = "Заказ успешно создан";
             return;

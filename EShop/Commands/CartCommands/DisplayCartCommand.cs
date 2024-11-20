@@ -1,4 +1,5 @@
 ﻿using Core;
+using DAL;
 using EShop.Pages;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace EShop.Commands.CartCommands
 {
     public class DisplayCartCommand : ICommandExecutable, IDisplayable
     {
-        private Cart _cart;
+        private IRepository<Cart> _cart;
         /// <summary>
         /// Имя команды
         /// </summary>
@@ -19,6 +20,11 @@ namespace EShop.Commands.CartCommands
         /// Реультат
         /// </summary>
         public string? Result { get; private set; }
+
+        public DisplayCartCommand(RepositoryFactory repositoryFactory)
+        {
+            _cart = repositoryFactory.CreateCartFactory();
+        }
 
         /// <summary>
         /// Получить описание команды
@@ -29,18 +35,14 @@ namespace EShop.Commands.CartCommands
             return "Отобразить корзину покупок";
         }
 
-        public DisplayCartCommand(Cart cart)
-        {
-            _cart = cart;
-        }
-
         /// <summary>
         /// Выполнить команду
         /// </summary>
         /// <returns></returns>
         public void Execute(string[]? args)
         {
-            Result = _cart.ToString();
+            var cart = _cart.GetAll().FirstOrDefault() ?? new Cart();
+            Result = cart.ToString();
         }
         /// <summary>
         /// Вывести на экран

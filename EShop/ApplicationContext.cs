@@ -1,7 +1,7 @@
 ﻿using Core;
 using Core.Payments;
 using DAL;
-using DAL.JSON;
+using DAL.Database;
 using EShop.Commands;
 using EShop.Commands.CartCommands;
 using EShop.Commands.CatalogCommands;
@@ -10,14 +10,16 @@ using EShop.Commands.PaymentCommands;
 using EShop.Commands.SystemCommands;
 using EShop.Pages;
 using EShop.Pages.Components;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace EShop
 {
     public class ApplicationContext
     {
-        private RepositoryFactory _repositoryFactory;
+        private readonly IServiceProvider _serviceProvider;
+    
         private readonly List<Order> _orders = new();
-        private readonly Cart _cart = new();
         private List<Payment> unpaidPayments= new();
         private MainPage? _mainPage;
         private UsersInput usersInput = new("Введите команду: ");
@@ -30,10 +32,24 @@ namespace EShop
         /// </summary>
         public const string Title = "Интернет магазин";
 
-        public ApplicationContext(int width, int height)
+        public ApplicationContext(int width, int height, IConfiguration configuration)
         {
-            Console.SetWindowSize(width, height);
-            _repositoryFactory = new JsonRepositoryFactory();
+            var services = new ServiceCollection()
+                .AddScoped<RepositoryFactory>(sp =>
+                {
+                    return new DatabaseRepositoryFactory(configuration["ConnectionString"] ?? "");
+                })
+                .AddScoped<DisplayProductsCommand>()
+                .AddScoped<DisplayServicesCommand>()
+                .AddScoped<AddProductToCartCommand>()
+                .AddScoped<AddServiceToCartCommand>()
+                .AddScoped<DisplayCartCommand>()
+                .AddScoped<CreateOrderCommand>()
+                .AddScoped<DisplayOrdersCommand>();
+
+            _serviceProvider = services.BuildServiceProvider();
+
+            Console.SetWindowSize(width, height);          
             commandList = new CommandsList(new List<IDisplayable>()
             {           
                 (IDisplayable)CreateCommand(CommandType.DisplayProducts),
@@ -58,18 +74,21 @@ namespace EShop
         /// <returns></returns>
         public ICommandExecutable CreateCommand(CommandType commandType)
         {
+            using var scope = _serviceProvider.CreateScope();
+            var _repositoryFactory = scope.ServiceProvider.GetRequiredService<RepositoryFactory>();
+
             return commandType switch
             {
-                CommandType.CreatePayment => new CreatePaymentCommand(unpaidPayments, _orders),
+                CommandType.CreatePayment => new CreatePaymentCommand(_repositoryFactory, unpaidPayments),
                 CommandType.MakePayment => new MakePaymentCommand(unpaidPayments, _orders),
                 CommandType.DisplayPayments => new DisplayPaymentsCommand(unpaidPayments),
-                CommandType.DisplayCart => new DisplayCartCommand(_cart),
-                CommandType.DisplayServices => new DisplayServicesCommand(),
-                CommandType.DisplayProducts => new DisplayProductsCommand(_repositoryFactory.CreateProductFactory()),
-                CommandType.AddProductToCart => new AddProductToCartCommand(_cart),
-                CommandType.AddServiceToCart => new AddServiceToCartCommand(_cart),
-                CommandType.DisplayOrders => new DisplayOrdersCommand(_orders),
-                CommandType.CreateOrder => new CreateOrderCommand(_orders, _cart),
+                CommandType.DisplayCart => scope.ServiceProvider.GetRequiredService<DisplayCartCommand>(),
+                CommandType.DisplayServices => scope.ServiceProvider.GetRequiredService<DisplayServicesCommand>(),
+                CommandType.DisplayProducts => scope.ServiceProvider.GetRequiredService<DisplayProductsCommand>(),
+                CommandType.AddProductToCart => scope.ServiceProvider.GetRequiredService<AddProductToCartCommand>(),
+                CommandType.AddServiceToCart => scope.ServiceProvider.GetRequiredService<AddServiceToCartCommand>(),
+                CommandType.DisplayOrders => scope.ServiceProvider.GetRequiredService<DisplayOrdersCommand>(),
+                CommandType.CreateOrder => scope.ServiceProvider.GetRequiredService<CreateOrderCommand>(),
                 CommandType.Exit => new ExitCommand(),
                 _ => throw new NotSupportedException()
             };

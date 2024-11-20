@@ -5,29 +5,35 @@ namespace Core
 {
     public class Order
     {
-        private List<CartLine> _cartLines;
+        public IReadOnlyCollection<CartLine> Lines { get; }
 
         /// <summary>
         /// Идентификатор
         /// </summary>
-        public Guid Id { get; init; }
+        public int Id { get; init; }
 
         /// <summary>
         /// Сумма заказа
         /// </summary>
         public decimal OrderSum { get; init; }
 
-        public OrderStatus Status { get; set; }
-
         /// <summary>
         /// Статус заказа
         /// </summary>
-        /// <param name="cartLines"></param>
-        public Order(List<CartLine> cartLines)
+        public OrderStatus Status { get; set; }
+
+        public Order(IEnumerable<CartLine> lines)
         {
-            Id = Guid.NewGuid();
-            _cartLines = cartLines;
+            Lines = lines.ToArray();
             Status = OrderStatus.New;
+
+        }
+
+        public Order(int id, OrderStatus orderStatus, IEnumerable<CartLine> cartLines)
+        {
+            Id = id;
+            Lines = cartLines.ToArray();
+            Status = orderStatus;
             OrderSum = cartLines.Sum(cl => cl.Price);
         }
 
@@ -42,7 +48,7 @@ namespace Core
             result.AppendLine($"{Environment.NewLine}Статус заказа: {Status}");
             result.AppendLine("Состав заказ: ");
             result.AppendLine("------------------------------------------");
-            foreach (var item in _cartLines)
+            foreach (var item in Lines)
             {
                 result.AppendLine(item.ToString());
                 sum += item.Price;
