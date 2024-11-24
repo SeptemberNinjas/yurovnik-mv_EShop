@@ -45,7 +45,12 @@ namespace EShop
                 .AddScoped<AddServiceToCartCommand>()
                 .AddScoped<DisplayCartCommand>()
                 .AddScoped<CreateOrderCommand>()
-                .AddScoped<DisplayOrdersCommand>();
+                .AddScoped<DisplayOrdersCommand>()
+                .AddScoped<CreatePaymentCommand>()
+                .AddScoped<DisplayPaymentsCommand>()
+                .AddScoped<MakePaymentCommand>()
+                .AddScoped<ExitCommand>()
+                .AddScoped<List<Payment>>();
 
             _serviceProvider = services.BuildServiceProvider();
 
@@ -79,9 +84,9 @@ namespace EShop
 
             return commandType switch
             {
-                CommandType.CreatePayment => new CreatePaymentCommand(_repositoryFactory, unpaidPayments),
-                CommandType.MakePayment => new MakePaymentCommand(unpaidPayments, _orders),
-                CommandType.DisplayPayments => new DisplayPaymentsCommand(unpaidPayments),
+                CommandType.CreatePayment => scope.ServiceProvider.GetRequiredService<CreatePaymentCommand>(),
+                CommandType.MakePayment => scope.ServiceProvider.GetRequiredService<MakePaymentCommand>(),
+                CommandType.DisplayPayments => scope.ServiceProvider.GetRequiredService<DisplayPaymentsCommand>(),
                 CommandType.DisplayCart => scope.ServiceProvider.GetRequiredService<DisplayCartCommand>(),
                 CommandType.DisplayServices => scope.ServiceProvider.GetRequiredService<DisplayServicesCommand>(),
                 CommandType.DisplayProducts => scope.ServiceProvider.GetRequiredService<DisplayProductsCommand>(),
@@ -89,7 +94,7 @@ namespace EShop
                 CommandType.AddServiceToCart => scope.ServiceProvider.GetRequiredService<AddServiceToCartCommand>(),
                 CommandType.DisplayOrders => scope.ServiceProvider.GetRequiredService<DisplayOrdersCommand>(),
                 CommandType.CreateOrder => scope.ServiceProvider.GetRequiredService<CreateOrderCommand>(),
-                CommandType.Exit => new ExitCommand(),
+                CommandType.Exit => scope.ServiceProvider.GetRequiredService<ExitCommand>(),
                 _ => throw new NotSupportedException()
             };
         }

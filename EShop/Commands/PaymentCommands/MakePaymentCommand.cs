@@ -1,5 +1,6 @@
 ﻿using Core;
 using Core.Payments;
+using DAL;
 using EShop.Pages;
 
 namespace EShop.Commands.PaymentCommands
@@ -7,17 +8,17 @@ namespace EShop.Commands.PaymentCommands
     public class MakePaymentCommand : ICommandExecutable, IDisplayable
     {
         private List<Payment> _paymentList;
-        private List<Order> _orders;
+        private IRepository<Order> _orders;
 
         /// <summary>
         /// Результат
         /// </summary>
         public string? Result { get; private set; }
 
-        public MakePaymentCommand(List<Payment> payments, List<Order> orders)
+        public MakePaymentCommand(RepositoryFactory repositoryFactory, List<Payment> payments)
         {
             _paymentList = payments;
-            _orders = orders;
+            _orders = repositoryFactory.CreateOrderFactory();
         }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace EShop.Commands.PaymentCommands
             payment.Pay(out string response);
             Result = response;
             _paymentList.Remove(payment);
-            var order = _orders.FirstOrDefault(o => o.Id == orderId);
+            var order = _orders.GetById(orderId);
             if (order is null)
             {
                 Result = "Не удалось найти заказ";

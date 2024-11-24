@@ -57,7 +57,7 @@ namespace EShop.Commands.PaymentCommands
                 return;
             }
 
-            if (!Guid.TryParse(args[0], out Guid orderId))
+            if (!int.TryParse(args[0], out int orderId))
             {
                 Result = "Некорректно указан id заказа";
                 return;
@@ -76,7 +76,7 @@ namespace EShop.Commands.PaymentCommands
             }
 
             --typeNumber;
-            var order = _orders.FirstOrDefault(o => o.Id.Equals(orderId));
+            var order = _orders.GetById(orderId);
             if (order is null)
             {
                 Result = "Заказ не найден";
