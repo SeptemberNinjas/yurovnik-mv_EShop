@@ -4,13 +4,13 @@ namespace EShop
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public async static Task Main(string[] args)
         {
             var confBuilder = new ConfigurationBuilder()
                .AddJsonFile("appsettings.json", optional: false)
                .Build();
             var application = new ApplicationContext(100, 50, confBuilder);
-            application.StartApp();           
+            await application.StartApp();           
         }
     }
 }

@@ -6,7 +6,7 @@
 
         void Update(T item);
 
-        Task InsertAsync();
-        Task UpdateAsync();
+        Task<int> InsertAsync(T item, CancellationToken cancellationToken);
+        Task UpdateAsync(T item, CancellationToken cancellationToken);
     }
 }

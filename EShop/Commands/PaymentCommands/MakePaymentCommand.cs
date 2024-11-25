@@ -74,5 +74,46 @@ namespace EShop.Commands.PaymentCommands
             }
             order.Status = OrderStatus.Paid;
         }
+
+        public async Task ExecuteAsync(string[]? args)
+        {
+            if (args is null || args.Length == 0)
+            {
+                Result = "Не передано ни одно аргумента";
+                return;
+            }
+
+            if (!int.TryParse(args[0], out int orderId))
+            {
+                Result = "Некорректно указан id заказа";
+                return;
+            }
+
+            var payment = _paymentList.FirstOrDefault(p => p.OrderId == orderId);
+            if (payment is null)
+            {
+                Result = "Оплата не найдена";
+                return;
+            }
+
+            payment.Pay(out string response);
+            Result = response;
+            _paymentList.Remove(payment);
+            var order = await _orders.GetByIdAsync(orderId);
+            if (order is null)
+            {
+                Result = "Не удалось найти заказ";
+                return;
+            }
+            order.Status = OrderStatus.Paid;
+        }
+
+        public async Task DisplayAsync()
+        {
+            await Task.Run(() =>
+            {
+                Console.WriteLine(GetInfo());
+            });
+        }
     }
 }

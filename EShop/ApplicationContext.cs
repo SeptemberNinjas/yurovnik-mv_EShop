@@ -102,7 +102,7 @@ namespace EShop
         /// <summary>
         /// Запустить приложение
         /// </summary>
-        public void StartApp()
+        public async Task StartApp()
         {      
             var elements = new List<IDisplayable>()
             {
@@ -112,19 +112,19 @@ namespace EShop
                usersInput,
             };
             _mainPage = new MainPage(elements);
-            LifeCycle();
+            await LifeCycle();
         }
 
-        private void LifeCycle()
+        private async Task LifeCycle()
         {
             while (true)
             {
-                Draw();
-                Update();
+                await Draw();
+                await Update();
             }
         }
 
-        private void Update()
+        private async Task Update()
         {
             var input = usersInput.Input;
 
@@ -149,17 +149,17 @@ namespace EShop
             }
 
             var commnad = commandList!.Commands[commandNumber - 1] as ICommandExecutable;
-            commnad!.Execute(args);
+            await commnad!.ExecuteAsync(args);
             if (commnad.Result is not null)
             {
                 resultFiled.Text = commnad.Result;
             }           
         }
 
-        private void Draw()
+        private async Task Draw()
         {
             Console.Clear();
-            _mainPage?.Display();
+            await _mainPage?.DisplayAsync();
         }
     }
 }

@@ -29,5 +29,14 @@ namespace EShop.Pages.Components
                 Commands[i].Display();
             }
         }
+
+        public async Task DisplayAsync()
+        {
+            for (int i = 0; i < Commands.Count; i++)
+            {
+                Console.Write($"{i + 1} - ");
+                await Commands[i].DisplayAsync();
+            }
+        }
     }
 }

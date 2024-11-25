@@ -36,5 +36,21 @@ namespace EShop.Commands.SystemCommands
         {
             Console.WriteLine(GetInfo());
         }
+
+        public async Task ExecuteAsync(string[]? args)
+        {
+            await Task.Run(() =>
+            {
+                Environment.Exit(0);
+            });
+        }
+
+        public async Task DisplayAsync()
+        {
+            await Task.Run(() =>
+            {
+                Console.WriteLine(GetInfo());
+            });
+        }
     }
 }

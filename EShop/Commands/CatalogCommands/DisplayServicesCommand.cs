@@ -75,6 +75,37 @@ namespace EShop.Commands.CatalogCommands
             }
         }
 
+        public async Task ExecuteAsync(string[]? args)
+        {
+            var sb = new StringBuilder();
+            var serives = await _services.GetAllAsync();
+
+            if (args is null || args.Length == 0)
+            {
+                foreach (var item in serives)
+                {
+                    sb.AppendLine(item.GetDisplayText());
+                }
+                Result = sb.ToString();
+                return;
+            }
+
+            if (int.TryParse(args[0], out var count))
+            {
+                for (int i = 0; i < Math.Min(count, serives.Count); i++)
+                {
+                    sb.AppendLine(serives.ElementAt(i).GetDisplayText());
+                }
+                Result = sb.ToString();
+                return;
+            }
+            else
+            {
+                Result = "Введенный параметр не является числом";
+                return;
+            }
+        }
+
         private void PrintItems(Service[] items)
         {
             foreach (var item in items)
@@ -82,6 +113,14 @@ namespace EShop.Commands.CatalogCommands
                 Console.WriteLine();
                 Console.WriteLine(item.GetDisplayText());
             }
+        }
+
+        public async Task DisplayAsync()
+        {
+            await Task.Run(() =>
+            {
+                Console.WriteLine(GetInfo());
+            });
         }
     }
 }

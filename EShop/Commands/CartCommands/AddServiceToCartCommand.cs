@@ -64,12 +64,46 @@ namespace EShop.Commands.CartCommands
 
             Result = "Не корректный тип параметра";
         }
+
+        public async Task ExecuteAsync(string[]? args)
+        {
+            if (args is null || args.Length == 0)
+            {
+                Result = "Не хватает аргументов ";
+                return;
+            }
+
+            if (int.TryParse(args[0], out var id))
+            {
+                var cart = (await _cartRepo.GetAllAsync()).FirstOrDefault() ?? new Cart();
+                var item = await _serviceRepo.GetByIdAsync(id);
+                if (item is null)
+                {
+                    Result = "Услуга не найдена";
+                    return;
+                }
+                Result = cart.AddService(item);
+                await _cartRepo.InsertAsync(cart, default);
+                return;
+            }
+
+            Result = "Не корректный тип параметра";
+        }
+
         /// <summary>
         /// Вывести на экран
         /// </summary>
         public void Display()
         {
             Console.WriteLine(GetInfo());
+        }
+
+        public async Task DisplayAsync()
+        {
+            await Task.Run(() =>
+            {
+                Console.WriteLine(GetInfo());
+            });
         }
     }
 }

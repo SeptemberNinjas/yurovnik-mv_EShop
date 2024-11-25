@@ -30,5 +30,17 @@ namespace EShop.Pages
                 element.Display();                
             }
         }
+        public async Task DisplayAsync()
+        {
+            foreach (var element in Elements)
+            {
+                if (element is ResultField resultField && resultField.Text == "")
+                {
+                    continue;
+                }
+                Console.WriteLine();
+                await element.DisplayAsync();
+            }
+        }
     }
 }

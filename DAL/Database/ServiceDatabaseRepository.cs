@@ -1,6 +1,7 @@
 ﻿using Core;
 using Npgsql;
 using System.Data;
+using System.Data.Common;
 
 namespace DAL.Database
 {
@@ -63,7 +64,7 @@ namespace DAL.Database
             return command.ExecuteNonQuery();
         }
 
-        public static Service GetService(NpgsqlDataReader reader)
+        public static Service GetService(DbDataReader reader)
         {
             return new Service(
                     reader.GetFieldValue<int>("id"),
@@ -76,27 +77,51 @@ namespace DAL.Database
             throw new NotImplementedException();
         }
 
-        public Task<IReadOnlyCollection<Service>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyCollection<Service>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var commandText = @"select *
+                    from catalog
+                    where type = 2;";
+
+            var result = await ExecuteReaderListAsync(commandText, GetService, cancellationToken);
+            return result.ToArray();
         }
 
-        public Task<int> GetCountAsync(CancellationToken cancellationToken = default)
+        public async Task<int> GetCountAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var commandText = @"select count(1)
+                    from catalog
+                    where type = 2;";
+
+            var result = await ExecuteReaderAsync(commandText, (reader) =>
+            {
+                return int.TryParse(reader[0]?.ToString(), out var count) ? count : 0;
+            }, cancellationToken);
+
+            return result;
         }
 
-        public Task<Service?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<Service?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var commandText = $@"select *
+                    from catalog 
+                    where type = 2 and id = {id};";
+
+            var result = await ExecuteReaderAsync(commandText, GetService, cancellationToken);
+
+            return result;
         }
 
-        public Task InsertAsync()
+        public async Task<int> InsertAsync(Service item, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var commandText = GetCommand($@"insert into catalog (id, name, price, type)
+                    values
+                    ({item.Id}, {item.Name}, {item.Price}, {item.ItemType});");
+           
+            return await commandText.ExecuteNonQueryAsync(cancellationToken);
         }
 
-        public Task UpdateAsync()
+        public Task UpdateAsync(Service item, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

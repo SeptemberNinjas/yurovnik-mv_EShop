@@ -66,12 +66,46 @@ namespace EShop.Commands.CartCommands
 
         }
 
+        public async Task ExecuteAsync(string[]? args)
+        {
+            if (args is null || args.Length < 2)
+            {
+                Result = "Не хватает аргументов ";
+                return;
+            }
+
+            if (int.TryParse(args[0], out var id) && int.TryParse(args[1], out var count))
+            {
+                var cart = (await _cartRepo.GetAllAsync()).FirstOrDefault() ?? new Cart(); ;                
+                var item = await _productRepo.GetByIdAsync(id);
+                if (item is null)
+                {
+                    Result = "Товар не найден";
+                    return;
+                }
+                Result = cart.AddProduct(item, count);
+                await _cartRepo.InsertAsync(cart, default);
+                return;
+            }
+
+            Result = "Не корректный тип параметра";
+
+        }
+
         /// <summary>
         /// Вывести на экран
         /// </summary>
         public void Display()
         {
             Console.WriteLine(GetInfo());
+        }
+
+        public async Task DisplayAsync()
+        {
+            await Task.Run(() => 
+            {
+                Console.WriteLine(GetInfo());
+            });
         }
     }
 }

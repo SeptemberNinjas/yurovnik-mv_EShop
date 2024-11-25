@@ -50,12 +50,35 @@ namespace EShop.Commands.OrderCommands
             Result = "Заказ успешно создан";
             return;
         }
+
+        public async Task ExecuteAsync(string[]? args)
+        {
+            var cart = (await _cartRepo.GetAllAsync()).FirstOrDefault() ?? new Cart();
+            if (cart == null || cart.Count == 0)
+            {
+                Result = "Невозможно создать заказ. Корзина пуста";
+                return;
+            }
+
+            await _orders.InsertAsync(cart.CreateOrderFromCart(), default);
+
+            Result = "Заказ успешно создан";
+            return;
+        }
         /// <summary>
         /// Вывести на экран
         /// </summary>
         public void Display()
         {
             Console.WriteLine(GetInfo());
+        }
+
+        public async Task DisplayAsync()
+        {
+            await Task.Run(() =>
+            {
+                Console.WriteLine(GetInfo());
+            });
         }
     }
 }

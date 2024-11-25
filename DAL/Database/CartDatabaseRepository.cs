@@ -74,9 +74,11 @@ namespace DAL.Database
             Insert(item);
         }
 
-        public Task<int> GetCountAsync(CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
+        public async Task<int> GetCountAsync(CancellationToken cancellationToken = default)
+        {           
+            var cart = await GetByIdAsync(default, cancellationToken);
+            return cart is null ? 0 : 1;
+
         }
 
         public async Task<Cart?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
@@ -105,14 +107,25 @@ namespace DAL.Database
             return cart is null ? [] : [cart];
         }
 
-        public Task InsertAsync()
+        public async Task<int> InsertAsync(Cart item, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            using var command = item.Lines.Count > 0
+                ? GetCommand(
+                    $"""
+                    truncate cart_line;
+                    insert into cart_line(item_id, count)
+                    values 
+                    {string.Join(',', item.Lines.Select(cl => $"({cl.ItemId}, {cl.Count})"))};
+                    """)
+                : GetCommand(
+                    "truncate cart_line;"
+                    );
+            return await command.ExecuteNonQueryAsync();
         }
 
-        public Task UpdateAsync()
+        public async Task UpdateAsync(Cart item, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await InsertAsync(item, cancellationToken);
         }
 
         private static CartLine GetCartLine(DbDataReader reader)

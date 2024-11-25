@@ -72,5 +72,43 @@ namespace EShop.Commands.CatalogCommands
                 return;
             }
         }
+
+        public async Task ExecuteAsync(string[]? args)
+        {
+            var sb = new StringBuilder();
+            var products = await _products.GetAllAsync();
+            if (args is null || args.Length == 0)
+            {
+                foreach (var item in products)
+                {
+                    sb.AppendLine(item.GetDisplayText());
+                }
+                Result = sb.ToString();
+                return;
+            }
+
+            if (int.TryParse(args[0], out var count))
+            {
+                for (int i = 0; i < Math.Min(count, products.Count); i++)
+                {
+                    sb.AppendLine(products.ElementAt(i).GetDisplayText());
+                }
+                Result = sb.ToString();
+                return;
+            }
+            else
+            {
+                Result = "Введенный параметр не является числом";
+                return;
+            }
+        }
+
+        public async Task DisplayAsync()
+        {
+            await Task.Run(() =>
+            {
+                Console.WriteLine(GetInfo());
+            });
+        }
     }
 }

@@ -46,12 +46,32 @@ namespace EShop.Commands.OrderCommands
             return;
         }
 
+        public async Task ExecuteAsync(string[]? args)
+        {
+            if (_orders is null || await _orders.GetCountAsync() == 0)
+            {
+                Result = "Заказов пока нет:(";
+                return;
+            }
+
+            Result = string.Join(Environment.NewLine, (await _orders.GetAllAsync()).Select(item => item.ToString()).ToArray());
+            return;
+        }
+
         /// <summary>
         /// Вывести на экран
         /// </summary>
         public void Display()
         {
             Console.WriteLine(GetInfo());
+        }
+
+        public async Task DisplayAsync()
+        {
+            await Task.Run(() =>
+            {
+                Console.WriteLine(GetInfo());
+            });
         }
     }
 }

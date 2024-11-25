@@ -44,12 +44,26 @@ namespace EShop.Commands.CartCommands
             var cart = _cart.GetAll().FirstOrDefault() ?? new Cart();
             Result = cart.ToString();
         }
+
+        public async Task ExecuteAsync(string[]? args)
+        {
+            var cart = (await _cart.GetAllAsync()).FirstOrDefault() ?? new Cart();
+            Result = cart.ToString();
+        }
         /// <summary>
         /// Вывести на экран
         /// </summary>
         public void Display()
         {
             Console.WriteLine(GetInfo());
+        }
+
+        public async Task DisplayAsync()
+        {
+            await Task.Run(() =>
+            {
+                Console.WriteLine(GetInfo());
+            });
         }
     }
 }

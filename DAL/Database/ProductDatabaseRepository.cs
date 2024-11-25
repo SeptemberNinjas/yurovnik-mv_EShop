@@ -1,6 +1,7 @@
 ﻿using Core;
 using Npgsql;
 using System.Data;
+using System.Data.Common;
 
 namespace DAL.Database
 {
@@ -71,7 +72,7 @@ namespace DAL.Database
             return command.ExecuteNonQuery();
         }
 
-        public static Product GetProduct(NpgsqlDataReader reader)
+        public static Product GetProduct(DbDataReader reader)
         {
             return new Product(
                     reader.GetFieldValue<int>("id"),
@@ -85,27 +86,50 @@ namespace DAL.Database
             throw new NotImplementedException();
         }
 
-        public Task<IReadOnlyCollection<Product>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyCollection<Product>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var commandText = @"select c.*, COALESCE(s.amount, 0) as amount
+                    from catalog c
+                        left join stock s on c.id = s.id
+                    where type = 1;";
+            var result = await ExecuteReaderListAsync(commandText, GetProduct, cancellationToken);
+            return result.ToArray();
         }
 
-        public Task<int> GetCountAsync(CancellationToken cancellationToken = default)
+        public async Task<int> GetCountAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var commandText = "select count(1) as count from catalog where type = 1;";
+
+            var result = await ExecuteReaderAsync(commandText, (reader) =>
+            {
+                return int.TryParse(reader[0]?.ToString(), out var count) ? count : 0;
+            }, cancellationToken);
+
+            return result;
         }
 
-        public Task<Product?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<Product?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var commandText = $@"select c.*, COALESCE(s.amount, 0) as amount 
+                    from catalog c
+                        left join stock s on c.id = s.id
+                    where type = 1 and c.Id = {id};";
+
+            var result = await ExecuteReaderAsync(commandText, GetProduct, cancellationToken);
+            return result;
+        }
+        
+        public async Task<int> InsertAsync(Product item, CancellationToken cancellationToken)
+        {
+            var command = GetCommand($@"insert into catalog (id, name, price, type)
+                    values
+                    ({item.Id}, {item.Name}, {item.Price}, {item.ItemType});
+                    insert into stocks(id, amount) values ({item.Id}, {item.Stock});");
+
+            return await command.ExecuteNonQueryAsync();
         }
 
-        public Task InsertAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateAsync()
+        public Task UpdateAsync(Product item, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
