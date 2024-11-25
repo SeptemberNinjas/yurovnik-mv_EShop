@@ -7,7 +7,7 @@
         /// </summary>
         public override PaymentType PaymentType => PaymentType.cash;
 
-        public CashPayment(Guid orderId, decimal total, decimal amountReceived) : base(orderId, total, amountReceived) {}
+        public CashPayment(int orderId, decimal total, decimal amountReceived) : base(orderId, total, amountReceived) {}
 
         /// <summary>
         /// Процедура оплаты

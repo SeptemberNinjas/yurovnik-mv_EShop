@@ -6,5 +6,9 @@ namespace DAL
     {
         public abstract IRepository<Product> CreateProductFactory();
         public abstract IRepository<Service> CreateServiceFactory();
+
+        public abstract IRepository<Cart> CreateCartFactory();
+
+        public abstract IRepository<Order> CreateOrderFactory();
     }
 }

@@ -54,5 +54,33 @@ namespace Core.Payments
             
             Result = sb.ToString();
         }
+
+        public async Task DisplayAsync()
+        {
+            await Task.Run(() =>
+            {
+                Console.WriteLine(GetInfo());
+            });
+        }
+
+        public async Task ExecuteAsync(string[]? args)
+        {
+            await Task.Run(() =>
+            {
+                if (_paymentsList is null || _paymentsList.Count == 0)
+                {
+                    Result = "Созданных оплат нет";
+                    return;
+                }
+
+                var sb = new StringBuilder();
+                foreach (var payment in _paymentsList)
+                {
+                    sb.AppendLine(payment.ToString());
+                }
+
+                Result = sb.ToString();
+            });
+        }
     }
 }

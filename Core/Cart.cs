@@ -1,18 +1,23 @@
-﻿
-using System.Dynamic;
-using System.Text;
+﻿using System.Text;
 
 namespace Core
 {
     public class Cart
     {
-        private readonly List<CartLine> _lines = new();
+        private List<CartLine> _lines = new();
 
+        public IReadOnlyCollection<CartLine> Lines => _lines;
         /// <summary>
         /// Количество позиций в корзине
         /// </summary>
         public int Count {  get => _lines.Count; }
 
+        public Cart() {}
+
+        public Cart(IEnumerable<CartLine> lines)
+        {
+            _lines = (List<CartLine>)lines;
+        }
         /// <summary>
         /// Добавить продукт в корзину
         /// </summary>

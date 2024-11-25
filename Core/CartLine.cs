@@ -2,19 +2,27 @@
 {
     public class CartLine
     {
-        private readonly SaleItem _saleItem;
+        /// <summary>
+        /// Продажная единица
+        /// </summary>
+        public SaleItem SaleItem { get; }     
 
         private int _count;
 
         /// <summary>
         /// Идентификатор позиции в корзине
         /// </summary>
-        public int ItemId => _saleItem.Id;
+        public int ItemId => SaleItem.Id;
+
+        /// <summary>
+        /// Наименование
+        /// </summary>
+        public string Name => SaleItem.Name;
 
         /// <summary>
         /// Тип позиции в корзине
         /// </summary>
-        public ItemTypes ItemType => _saleItem.ItemType;
+        public ItemTypes ItemType => SaleItem.ItemType;
 
         /// <summary>
         /// Количество
@@ -24,7 +32,7 @@
             get => _count;
             set
             {
-                if (_saleItem.OnlyOneItem || value < 1)
+                if (SaleItem.OnlyOneItem || value < 1)
                 {
                     return;
                 }
@@ -40,13 +48,13 @@
         {
             get
             {
-                return _saleItem.OnlyOneItem ? _saleItem.Price : _saleItem.Price * Count;
+                return SaleItem.OnlyOneItem ? SaleItem.Price : SaleItem.Price * Count;
             }
         }
 
         public CartLine(SaleItem item, int requestedCount)
         {
-            _saleItem = item;
+            SaleItem = item;
             _count = requestedCount;
         }
 
@@ -54,6 +62,6 @@
         /// Текстовое представление позиции в корзине
         /// </summary>
         /// <returns></returns>
-        public override string? ToString() => $"ID: {_saleItem!.Id} Наименование: {_saleItem!.Name} Количество: {Count} Сумма: {Price}";
+        public override string? ToString() => $"ID: {SaleItem!.Id} Наименование: {SaleItem!.Name} Количество: {Count} Сумма: {Price}";
     }
 }

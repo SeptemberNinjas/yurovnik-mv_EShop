@@ -1,4 +1,5 @@
-﻿namespace EShop.Pages.Components
+﻿
+namespace EShop.Pages.Components
 {
     public class UsersInput : IDisplayable
     {
@@ -20,6 +21,14 @@
         public void Display()
         {
             Console.WriteLine(Title);
+        }
+
+        public async Task DisplayAsync()
+        {
+            await Task.Run(() =>
+            {
+                Console.WriteLine(Title);
+            });
         }
     }
 }

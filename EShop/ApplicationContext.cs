@@ -1,5 +1,7 @@
 ﻿using Core;
 using Core.Payments;
+using DAL;
+using DAL.Database;
 using EShop.Commands;
 using EShop.Commands.CartCommands;
 using EShop.Commands.CatalogCommands;
@@ -8,15 +10,16 @@ using EShop.Commands.PaymentCommands;
 using EShop.Commands.SystemCommands;
 using EShop.Pages;
 using EShop.Pages.Components;
-using System.Xml.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace EShop
 {
     public class ApplicationContext
     {
-
+        private readonly IServiceProvider _serviceProvider;
+    
         private readonly List<Order> _orders = new();
-        private readonly Cart _cart = new();
         private List<Payment> unpaidPayments= new();
         private MainPage? _mainPage;
         private UsersInput usersInput = new("Введите команду: ");
@@ -29,10 +32,29 @@ namespace EShop
         /// </summary>
         public const string Title = "Интернет магазин";
 
-        public ApplicationContext(int width, int height)
+        public ApplicationContext(int width, int height, IConfiguration configuration)
         {
-            Console.SetWindowSize(width, height);
+            var services = new ServiceCollection()
+                .AddScoped<RepositoryFactory>(sp =>
+                {
+                    return new DatabaseRepositoryFactory(configuration["ConnectionString"] ?? "");
+                })
+                .AddScoped<DisplayProductsCommand>()
+                .AddScoped<DisplayServicesCommand>()
+                .AddScoped<AddProductToCartCommand>()
+                .AddScoped<AddServiceToCartCommand>()
+                .AddScoped<DisplayCartCommand>()
+                .AddScoped<CreateOrderCommand>()
+                .AddScoped<DisplayOrdersCommand>()
+                .AddScoped<CreatePaymentCommand>()
+                .AddScoped<DisplayPaymentsCommand>()
+                .AddScoped<MakePaymentCommand>()
+                .AddScoped<ExitCommand>()
+                .AddScoped<List<Payment>>();
 
+            _serviceProvider = services.BuildServiceProvider();
+
+            Console.SetWindowSize(width, height);          
             commandList = new CommandsList(new List<IDisplayable>()
             {           
                 (IDisplayable)CreateCommand(CommandType.DisplayProducts),
@@ -57,19 +79,22 @@ namespace EShop
         /// <returns></returns>
         public ICommandExecutable CreateCommand(CommandType commandType)
         {
+            using var scope = _serviceProvider.CreateScope();
+            var _repositoryFactory = scope.ServiceProvider.GetRequiredService<RepositoryFactory>();
+
             return commandType switch
             {
-                CommandType.CreatePayment => new CreatePaymentCommand(unpaidPayments, _orders),
-                CommandType.MakePayment => new MakePaymentCommand(unpaidPayments, _orders),
-                CommandType.DisplayPayments => new DisplayPaymentsCommand(unpaidPayments),
-                CommandType.DisplayCart => new DisplayCartCommand(_cart),
-                CommandType.DisplayServices => new DisplayServicesCommand(),
-                CommandType.DisplayProducts => new DisplayProductsCommand(),
-                CommandType.AddProductToCart => new AddProductToCartCommand(_cart),
-                CommandType.AddServiceToCart => new AddServiceToCartCommand(_cart),
-                CommandType.DisplayOrders => new DisplayOrdersCommand(_orders),
-                CommandType.CreateOrder => new CreateOrderCommand(_orders, _cart),
-                CommandType.Exit => new ExitCommand(),
+                CommandType.CreatePayment => scope.ServiceProvider.GetRequiredService<CreatePaymentCommand>(),
+                CommandType.MakePayment => scope.ServiceProvider.GetRequiredService<MakePaymentCommand>(),
+                CommandType.DisplayPayments => scope.ServiceProvider.GetRequiredService<DisplayPaymentsCommand>(),
+                CommandType.DisplayCart => scope.ServiceProvider.GetRequiredService<DisplayCartCommand>(),
+                CommandType.DisplayServices => scope.ServiceProvider.GetRequiredService<DisplayServicesCommand>(),
+                CommandType.DisplayProducts => scope.ServiceProvider.GetRequiredService<DisplayProductsCommand>(),
+                CommandType.AddProductToCart => scope.ServiceProvider.GetRequiredService<AddProductToCartCommand>(),
+                CommandType.AddServiceToCart => scope.ServiceProvider.GetRequiredService<AddServiceToCartCommand>(),
+                CommandType.DisplayOrders => scope.ServiceProvider.GetRequiredService<DisplayOrdersCommand>(),
+                CommandType.CreateOrder => scope.ServiceProvider.GetRequiredService<CreateOrderCommand>(),
+                CommandType.Exit => scope.ServiceProvider.GetRequiredService<ExitCommand>(),
                 _ => throw new NotSupportedException()
             };
         }
@@ -77,7 +102,7 @@ namespace EShop
         /// <summary>
         /// Запустить приложение
         /// </summary>
-        public void StartApp()
+        public async Task StartApp()
         {      
             var elements = new List<IDisplayable>()
             {
@@ -87,19 +112,19 @@ namespace EShop
                usersInput,
             };
             _mainPage = new MainPage(elements);
-            LifeCycle();
+            await LifeCycle();
         }
 
-        private void LifeCycle()
+        private async Task LifeCycle()
         {
             while (true)
             {
-                Draw();
-                Update();
+                await Draw();
+                await Update();
             }
         }
 
-        private void Update()
+        private async Task Update()
         {
             var input = usersInput.Input;
 
@@ -124,17 +149,17 @@ namespace EShop
             }
 
             var commnad = commandList!.Commands[commandNumber - 1] as ICommandExecutable;
-            commnad!.Execute(args);
+            await commnad!.ExecuteAsync(args);
             if (commnad.Result is not null)
             {
                 resultFiled.Text = commnad.Result;
             }           
         }
 
-        private void Draw()
+        private async Task Draw()
         {
             Console.Clear();
-            _mainPage?.Display();
+            await _mainPage?.DisplayAsync();
         }
     }
 }

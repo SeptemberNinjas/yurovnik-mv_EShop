@@ -1,5 +1,6 @@
 ﻿using Core;
 using Core.Payments;
+using DAL;
 using EShop.Pages;
 
 namespace EShop.Commands.PaymentCommands
@@ -8,7 +9,7 @@ namespace EShop.Commands.PaymentCommands
     {
 
         private List<Payment> _paymentList;
-        private List<Order> _orders;
+        private IRepository<Order> _orders;
 
         /// <summary>
         /// Наименование
@@ -20,10 +21,10 @@ namespace EShop.Commands.PaymentCommands
         /// </summary>
         public string? Result { get; private set; }
 
-        public CreatePaymentCommand(List<Payment> payments, List<Order> orders)
+        public CreatePaymentCommand(RepositoryFactory repositoryFactory, List<Payment> payments)
         {
             _paymentList = payments;
-            _orders = orders;
+            _orders = repositoryFactory.CreateOrderFactory();
         }
 
         /// <summary>
@@ -43,20 +44,19 @@ namespace EShop.Commands.PaymentCommands
             Console.WriteLine(GetInfo());
         }
 
-
         /// <summary>
         /// Выполнить команду
         /// </summary>
         /// <param name="args"></param>
         public void Execute(string[]? args)
         {
-            if (args is null || args.Length == 0)
+            if (args is null || args.Length == 0 || args.Length < 3)
             {
-                Result = "Не передано ни одно аргумента";
+                Result = "Передано не корректное количество параметров";
                 return;
             }
 
-            if (!Guid.TryParse(args[0], out Guid orderId))
+            if (!int.TryParse(args[0], out int orderId))
             {
                 Result = "Некорректно указан id заказа";
                 return;
@@ -75,7 +75,7 @@ namespace EShop.Commands.PaymentCommands
             }
 
             --typeNumber;
-            var order = _orders.FirstOrDefault(o => o.Id.Equals(orderId));
+            var order = _orders.GetById(orderId);
             if (order is null)
             {
                 Result = "Заказ не найден";
@@ -83,6 +83,56 @@ namespace EShop.Commands.PaymentCommands
             }
             _paymentList.Add(order.createPaymentFromOrder(amount,(PaymentType)typeNumber));
             Result = $"Оплата на заказ {orderId} успешно создана";
+        }
+
+        /// <summary>
+        /// Выполнить команду
+        /// </summary>
+        /// <param name="args"></param>
+        public async Task ExecuteAsync(string[]? args)
+        {
+            if (args is null || args.Length == 0 || args.Length < 3)
+            {
+                Result = "Передано не корректное количество параметров";
+                return;
+            }
+
+            if (!int.TryParse(args[0], out int orderId))
+            {
+                Result = "Некорректно указан id заказа";
+                return;
+            }
+
+            if (!int.TryParse(args[1], out int typeNumber) || typeNumber > 2)
+            {
+                Result = "Некорректно указан тип оплаты";
+                return;
+            }
+
+            if (!decimal.TryParse(args[2], out decimal amount))
+            {
+                Result = "Некорректно введено количество средств для оплаты";
+                return;
+            }
+
+            --typeNumber;
+            var order = await _orders.GetByIdAsync(orderId);
+            if (order is null)
+            {
+                Result = "Заказ не найден";
+                return;
+            }
+            _paymentList.Add(order.createPaymentFromOrder(amount, (PaymentType)typeNumber));
+            Result = $"Оплата на заказ {orderId} успешно создана";
+        }
+
+        public async Task DisplayAsync()
+        {
+            await Task.Run(() =>
+            {
+                Console.WriteLine(GetInfo());
+            });
+            
         }
     }
 }

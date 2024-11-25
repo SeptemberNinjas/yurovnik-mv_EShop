@@ -6,5 +6,6 @@
         /// Вывести на экран
         /// </summary>
         public void Display();
+        public Task DisplayAsync();
     }
 }

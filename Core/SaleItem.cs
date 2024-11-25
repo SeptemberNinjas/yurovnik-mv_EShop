@@ -28,7 +28,7 @@ namespace Core
         /// </summary>
         public abstract ItemTypes ItemType { get; }
 
-        protected SaleItem(int id, string name, decimal price)
+        public SaleItem(int id, string name, decimal price)
         {
             Id = id; 
             Name = name; 

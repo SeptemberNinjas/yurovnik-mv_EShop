@@ -17,5 +17,7 @@ namespace EShop.Commands
         /// </summary>
         /// <param name="args"></param>
         public void Execute(string[]? args);
+
+        public Task ExecuteAsync(string[]? args);
     }
 }
