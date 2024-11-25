@@ -18,6 +18,6 @@ namespace Core
 
         Task<int> GetCountAsync(CancellationToken cancellationToken = default);
 
-        Task<T?> GetByIDAsync(int id, CancellationToken cancellationToken = default);
+        Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     }
 }

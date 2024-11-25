@@ -95,7 +95,7 @@ namespace DAL.Database
             throw new NotImplementedException();
         }
 
-        public Task<Product?> GetByIDAsync(int id, CancellationToken cancellationToken = default)
+        public Task<Product?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

@@ -83,7 +83,7 @@ namespace DAL.Database
             return GetOrders(command).SingleOrDefault();
         }
 
-        public Task<Order?> GetByIDAsync(int id, CancellationToken cancellationToken = default)
+        public Task<Order?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

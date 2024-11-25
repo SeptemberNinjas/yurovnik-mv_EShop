@@ -1,11 +1,8 @@
 ﻿using Core;
 using Npgsql;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.Common;
+
 
 namespace DAL.Database
 {
@@ -22,11 +19,6 @@ namespace DAL.Database
         {
             var cart = GetById(default);
             return cart is null? [] : [cart];
-        }
-
-        public Task<IReadOnlyCollection<Cart>> GetAllAsync(CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
         }
 
         public Cart? GetById(int id)
@@ -56,19 +48,9 @@ namespace DAL.Database
             return null;
         }
 
-        public Task<Cart?> GetByIDAsync(int id, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
         public int GetCount()
         {
             return GetById(default) is null ? 0 : 1;
-        }
-
-        public Task<int> GetCountAsync(CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
         }
 
         public int Insert(Cart item)
@@ -92,6 +74,37 @@ namespace DAL.Database
             Insert(item);
         }
 
+        public Task<int> GetCountAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Cart?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var command =
+                $"""
+                select c.*, s.*, cl.count
+                from cart_line cl
+                join catalog c on cl.item_id = c.id
+                left join stock s on c.id = s.id
+                """;
+
+            var result = await ExecuteReaderListAsync(command, GetCartLine, cancellationToken);
+
+            if (result.Count != 0)
+            {
+                return new Cart(result);
+            }
+
+            return null;
+        }
+
+        public async Task<IReadOnlyCollection<Cart>> GetAllAsync(CancellationToken cancellationToken = default)
+        {
+            var cart = await GetByIdAsync(default, cancellationToken);
+            return cart is null ? [] : [cart];
+        }
+
         public Task InsertAsync()
         {
             throw new NotImplementedException();
@@ -102,7 +115,7 @@ namespace DAL.Database
             throw new NotImplementedException();
         }
 
-        private CartLine GetCartLine(NpgsqlDataReader reader)
+        private static CartLine GetCartLine(DbDataReader reader)
         {
             var itemType = (ItemTypes)reader.GetFieldValue<int>("type");
             SaleItem item = itemType == ItemTypes.Product
