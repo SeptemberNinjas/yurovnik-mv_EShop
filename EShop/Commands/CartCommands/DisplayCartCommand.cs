@@ -1,17 +1,12 @@
 ﻿using Core;
-using DAL;
 using EShop.Pages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Application.Orders;
 
 namespace EShop.Commands.CartCommands
 {
     public class DisplayCartCommand : ICommandExecutable, IDisplayable
     {
-        private IRepository<Cart> _cart;
+        private GetCartHandler _cartHandler;
         /// <summary>
         /// Имя команды
         /// </summary>
@@ -21,9 +16,9 @@ namespace EShop.Commands.CartCommands
         /// </summary>
         public string? Result { get; private set; }
 
-        public DisplayCartCommand(RepositoryFactory repositoryFactory)
+        public DisplayCartCommand(GetCartHandler getCartHandler)
         {
-            _cart = repositoryFactory.CreateCartFactory();
+            _cartHandler = getCartHandler;
         }
 
         /// <summary>
@@ -35,20 +30,10 @@ namespace EShop.Commands.CartCommands
             return "Отобразить корзину покупок";
         }
 
-        /// <summary>
-        /// Выполнить команду
-        /// </summary>
-        /// <returns></returns>
-        public void Execute(string[]? args)
+        public async Task ExecuteAsync(string[]? args, CancellationToken cancellationToken)
         {
-            var cart = _cart.GetAll().FirstOrDefault() ?? new Cart();
-            Result = cart.ToString();
-        }
-
-        public async Task ExecuteAsync(string[]? args)
-        {
-            var cart = (await _cart.GetAllAsync()).FirstOrDefault() ?? new Cart();
-            Result = cart.ToString();
+            var result = (await _cartHandler.GetCartAsync(cancellationToken));
+            Result = result.Value.ToString();
         }
         /// <summary>
         /// Вывести на экран
@@ -58,7 +43,7 @@ namespace EShop.Commands.CartCommands
             Console.WriteLine(GetInfo());
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {

@@ -12,6 +12,8 @@ using EShop.Pages;
 using EShop.Pages.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Application.Orders;
+using Application.SaleItem;
 
 namespace EShop
 {
@@ -39,6 +41,9 @@ namespace EShop
                 {
                     return new DatabaseRepositoryFactory(configuration["ConnectionString"] ?? "");
                 })
+                .AddScoped<AddCartLineHandler>()
+                .AddScoped<GetCartHandler>()
+                .AddScoped<GetSaleItemHandler>()
                 .AddScoped<DisplayProductsCommand>()
                 .AddScoped<DisplayServicesCommand>()
                 .AddScoped<AddProductToCartCommand>()
@@ -149,7 +154,7 @@ namespace EShop
             }
 
             var commnad = commandList!.Commands[commandNumber - 1] as ICommandExecutable;
-            await commnad!.ExecuteAsync(args);
+            await commnad!.ExecuteAsync(args, default);
             if (commnad.Result is not null)
             {
                 resultFiled.Text = commnad.Result;
@@ -159,7 +164,7 @@ namespace EShop
         private async Task Draw()
         {
             Console.Clear();
-            await _mainPage?.DisplayAsync();
+            await _mainPage!.DisplayAsync(default);
         }
     }
 }

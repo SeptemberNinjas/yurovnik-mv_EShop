@@ -30,7 +30,7 @@ namespace EShop.Pages
                 element.Display();                
             }
         }
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             foreach (var element in Elements)
             {
@@ -39,7 +39,7 @@ namespace EShop.Pages
                     continue;
                 }
                 Console.WriteLine();
-                await element.DisplayAsync();
+                await element.DisplayAsync(default);
             }
         }
     }

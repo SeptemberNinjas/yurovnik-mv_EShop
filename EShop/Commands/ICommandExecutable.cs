@@ -12,12 +12,13 @@ namespace EShop.Commands
         /// Результат
         /// </summary>
         public string? Result { get; }
+
         /// <summary>
-        /// Выполнить команду
+        /// Выполнить команду асинхронно
         /// </summary>
         /// <param name="args"></param>
-        public void Execute(string[]? args);
-
-        public Task ExecuteAsync(string[]? args);
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public Task ExecuteAsync(string[]? args, CancellationToken cancellationToken);
     }
 }

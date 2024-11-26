@@ -92,7 +92,7 @@ namespace EShop.Pages.Components
             Console.ResetColor();
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {

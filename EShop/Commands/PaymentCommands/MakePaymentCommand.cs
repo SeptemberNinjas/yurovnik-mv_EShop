@@ -75,7 +75,7 @@ namespace EShop.Commands.PaymentCommands
             order.Status = OrderStatus.Paid;
         }
 
-        public async Task ExecuteAsync(string[]? args)
+        public async Task ExecuteAsync(string[]? args, CancellationToken cancellationToken)
         {
             if (args is null || args.Length == 0)
             {
@@ -108,7 +108,7 @@ namespace EShop.Commands.PaymentCommands
             order.Status = OrderStatus.Paid;
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {

@@ -51,7 +51,7 @@ namespace EShop.Commands.OrderCommands
             return;
         }
 
-        public async Task ExecuteAsync(string[]? args)
+        public async Task ExecuteAsync(string[]? args, CancellationToken cancellationToken)
         {
             var cart = (await _cartRepo.GetAllAsync()).FirstOrDefault() ?? new Cart();
             if (cart == null || cart.Count == 0)
@@ -73,7 +73,7 @@ namespace EShop.Commands.OrderCommands
             Console.WriteLine(GetInfo());
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {

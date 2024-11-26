@@ -46,7 +46,7 @@ namespace EShop.Commands.OrderCommands
             return;
         }
 
-        public async Task ExecuteAsync(string[]? args)
+        public async Task ExecuteAsync(string[]? args, CancellationToken cancellationToken)
         {
             if (_orders is null || await _orders.GetCountAsync() == 0)
             {
@@ -66,7 +66,7 @@ namespace EShop.Commands.OrderCommands
             Console.WriteLine(GetInfo());
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {

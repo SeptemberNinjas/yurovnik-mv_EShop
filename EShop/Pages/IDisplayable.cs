@@ -1,4 +1,5 @@
-﻿namespace EShop.Pages
+﻿
+namespace EShop.Pages
 {
     public interface IDisplayable
     {
@@ -6,6 +7,6 @@
         /// Вывести на экран
         /// </summary>
         public void Display();
-        public Task DisplayAsync();
+        public Task DisplayAsync(CancellationToken cancellationToken);
     }
 }

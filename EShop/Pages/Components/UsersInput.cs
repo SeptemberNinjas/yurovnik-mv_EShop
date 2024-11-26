@@ -1,4 +1,5 @@
 ﻿
+
 namespace EShop.Pages.Components
 {
     public class UsersInput : IDisplayable
@@ -23,7 +24,7 @@ namespace EShop.Pages.Components
             Console.WriteLine(Title);
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {
