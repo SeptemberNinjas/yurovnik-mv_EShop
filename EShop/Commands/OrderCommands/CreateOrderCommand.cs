@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using Application.Orders;
+using Core;
 using DAL;
 using EShop.Pages;
 
@@ -6,8 +7,7 @@ namespace EShop.Commands.OrderCommands
 {
     internal class CreateOrderCommand : ICommandExecutable, IDisplayable
     {
-        private IRepository<Order> _orders;
-        private IRepository<Cart> _cartRepo;
+        private CreateOrderHandler _createOrderHandler;
         /// <summary>
         /// Имя команды
         /// </summary>
@@ -25,44 +25,21 @@ namespace EShop.Commands.OrderCommands
         {
             return "Создать заказ";
         }
-        public CreateOrderCommand(RepositoryFactory repositoryFactory)
+        public CreateOrderCommand(CreateOrderHandler createOrderHandler)
         {
-            _orders = repositoryFactory.CreateOrderFactory();
-            _cartRepo = repositoryFactory.CreateCartFactory();
+            _createOrderHandler = createOrderHandler;
         }
 
         /// <summary>
-        /// Выполнить команду
+        /// Выполнить команду асинхронно
         /// </summary>
-        /// <param name="cart"></param>
+        /// <param name="args"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public void Execute(string[]? args)
+        public async Task ExecuteAsync(string[]? args, CancellationToken cancellationToken)
         {
-            var cart = _cartRepo.GetAll().FirstOrDefault() ?? new Cart();
-            if (cart == null || cart.Count == 0)
-            {
-                Result = "Невозможно создать заказ. Корзина пуста";
-                return;
-            }
-
-            _orders.Insert(cart.CreateOrderFromCart());          
-
-            Result = "Заказ успешно создан";
-            return;
-        }
-
-        public async Task ExecuteAsync(string[]? args)
-        {
-            var cart = (await _cartRepo.GetAllAsync()).FirstOrDefault() ?? new Cart();
-            if (cart == null || cart.Count == 0)
-            {
-                Result = "Невозможно создать заказ. Корзина пуста";
-                return;
-            }
-
-            await _orders.InsertAsync(cart.CreateOrderFromCart(), default);
-
-            Result = "Заказ успешно создан";
+            var result = await _createOrderHandler.CreateOrderAsync(cancellationToken);
+            Result = result.ToString();
             return;
         }
         /// <summary>
@@ -73,7 +50,7 @@ namespace EShop.Commands.OrderCommands
             Console.WriteLine(GetInfo());
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {

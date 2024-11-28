@@ -55,7 +55,7 @@ namespace Core.Payments
             Result = sb.ToString();
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {
@@ -63,7 +63,7 @@ namespace Core.Payments
             });
         }
 
-        public async Task ExecuteAsync(string[]? args)
+        public async Task ExecuteAsync(string[]? args, CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {

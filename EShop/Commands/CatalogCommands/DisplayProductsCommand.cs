@@ -1,4 +1,6 @@
-﻿using Core;
+﻿using Application.Orders;
+using Application.SaleItem;
+using Core;
 using DAL;
 using EShop.Pages;
 using System.Text;
@@ -7,7 +9,7 @@ namespace EShop.Commands.CatalogCommands
 {
     public class DisplayProductsCommand : ICommandExecutable, IDisplayable
     {
-        private IRepository<Product> _products;
+        private GetSaleItemHandler _productsHandler;
         /// <summary>
         /// Имя команды
         /// </summary>
@@ -17,9 +19,9 @@ namespace EShop.Commands.CatalogCommands
         /// </summary>
         public string? Result {get; private set;}
 
-        public DisplayProductsCommand(RepositoryFactory repositoryFactory)
+        public DisplayProductsCommand(GetSaleItemHandler getSaleItemHandler)
         {
-            _products = repositoryFactory.CreateProductFactory();
+            _productsHandler = getSaleItemHandler;
         }
 
         /// <summary>
@@ -42,68 +44,34 @@ namespace EShop.Commands.CatalogCommands
         /// Выполнить команду
         /// </summary>
         /// <param name="args"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public void Execute(string[]? args)
-        {            
-            var sb = new StringBuilder();
-            var products = _products.GetAll();
-            if (args is null || args.Length == 0)
-            {
-                foreach (var item in products)
-                {
-                    sb.AppendLine(item.GetDisplayText());
-                }
-                Result = sb.ToString();
-                return;
-            }
-
-            if (int.TryParse(args[0], out var count))
-            {                
-                for (int i = 0; i < Math.Min(count, products.Count); i++)
-                {
-                    sb.AppendLine(products.ElementAt(i).GetDisplayText());
-                }
-                Result = sb.ToString();
-                return;
-            }
-            else
-            {
-                Result = "Введенный параметр не является числом";
-                return;
-            }
-        }
-
-        public async Task ExecuteAsync(string[]? args)
+        public async Task ExecuteAsync(string[]? args, CancellationToken cancellationToken)
         {
-            var sb = new StringBuilder();
-            var products = await _products.GetAllAsync();
-            if (args is null || args.Length == 0)
+            _ = int.TryParse(args?.FirstOrDefault(), out int count);
+            
+            var products = await _productsHandler.GetItemsAsync(ItemTypes.Product, count, cancellationToken);
+
+            if (products.IsFailed)
             {
-                foreach (var item in products)
-                {
-                    sb.AppendLine(item.GetDisplayText());
-                }
-                Result = sb.ToString();
+                Result = "Не удалось получить список товаров";
                 return;
             }
 
-            if (int.TryParse(args[0], out var count))
+            var sb = new StringBuilder("Список товаров:").AppendLine();
+
+            for (int i = 0; i < products.Value.Count(); i++)
             {
-                for (int i = 0; i < Math.Min(count, products.Count); i++)
-                {
-                    sb.AppendLine(products.ElementAt(i).GetDisplayText());
-                }
-                Result = sb.ToString();
-                return;
+                var item = products.Value.ElementAt(i);
+                sb
+                 .Append($"{item.Id}. {item.Name}. Цена: {item.Price:F2}. Остатки: {item.Stock}")
+                 .AppendLine();
             }
-            else
-            {
-                Result = "Введенный параметр не является числом";
-                return;
-            }
+
+            Result = sb.ToString();
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {

@@ -89,7 +89,8 @@ namespace EShop.Commands.PaymentCommands
         /// Выполнить команду
         /// </summary>
         /// <param name="args"></param>
-        public async Task ExecuteAsync(string[]? args)
+        /// <param name="cancellationToken"></param>
+        public async Task ExecuteAsync(string[]? args, CancellationToken cancellationToken)
         {
             if (args is null || args.Length == 0 || args.Length < 3)
             {
@@ -126,7 +127,7 @@ namespace EShop.Commands.PaymentCommands
             Result = $"Оплата на заказ {orderId} успешно создана";
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {

@@ -37,7 +37,7 @@ namespace EShop.Commands.SystemCommands
             Console.WriteLine(GetInfo());
         }
 
-        public async Task ExecuteAsync(string[]? args)
+        public async Task ExecuteAsync(string[]? args, CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {
@@ -45,7 +45,7 @@ namespace EShop.Commands.SystemCommands
             });
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {

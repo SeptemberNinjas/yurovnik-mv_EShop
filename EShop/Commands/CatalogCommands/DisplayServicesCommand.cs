@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using Application.SaleItem;
+using Core;
 using DAL;
 using EShop.Pages;
 using System.Text;
@@ -7,7 +8,7 @@ namespace EShop.Commands.CatalogCommands
 {
     public class DisplayServicesCommand : ICommandExecutable, IDisplayable
     {
-        private readonly IRepository<Service> _services;
+        private readonly GetSaleItemHandler _servicesHandler;
 
         /// <summary>
         /// Имя команды
@@ -18,9 +19,9 @@ namespace EShop.Commands.CatalogCommands
         /// </summary>
         public string? Result { get; private set; }
 
-        public DisplayServicesCommand(RepositoryFactory repositoryFactory)
+        public DisplayServicesCommand(GetSaleItemHandler getSaleItemHandler)
         {
-            _services = repositoryFactory.CreateServiceFactory();
+            _servicesHandler = getSaleItemHandler;
         }
 
         /// <summary>
@@ -39,71 +40,29 @@ namespace EShop.Commands.CatalogCommands
             Console.WriteLine(GetInfo());
         }
 
-        /// <summary>
-        /// Выполнить команду
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public void Execute(string[]? args)
+        public async Task ExecuteAsync(string[]? args, CancellationToken cancellationToken)
         {
+            _ = int.TryParse(args?.ToString(), out int count);
+
+            var services = await _servicesHandler.GetItemsAsync(ItemTypes.Service, count, cancellationToken);
+
+            if (services.IsFailed)
+            {
+                Result = "Не удалось получить список услуг";
+                return;
+            }
+
             var sb = new StringBuilder();
-            var serives = _services.GetAll();
 
-            if (args is null || args.Length == 0)
+            for (int i = 0; i < services.Value.Count(); i++)
             {
-                foreach (var item in serives)
-                {
-                    sb.AppendLine(item.GetDisplayText());
-                }
-                Result = sb.ToString();
-                return;
+                var item = services.Value.ElementAt(i);
+                sb
+                 .Append($"{item.Id}. {item.Name}. Цена: {item.Price:F2}")
+                 .AppendLine();
             }
 
-            if (int.TryParse(args[0], out var count))
-            {
-                for (int i = 0; i < Math.Min(count, serives.Count); i++)
-                {
-                    sb.AppendLine(serives.ElementAt(i).GetDisplayText());
-                }
-                Result = sb.ToString();
-                return;
-            }
-            else
-            {
-                Result = "Введенный параметр не является числом";
-                return;
-            }
-        }
-
-        public async Task ExecuteAsync(string[]? args)
-        {
-            var sb = new StringBuilder();
-            var serives = await _services.GetAllAsync();
-
-            if (args is null || args.Length == 0)
-            {
-                foreach (var item in serives)
-                {
-                    sb.AppendLine(item.GetDisplayText());
-                }
-                Result = sb.ToString();
-                return;
-            }
-
-            if (int.TryParse(args[0], out var count))
-            {
-                for (int i = 0; i < Math.Min(count, serives.Count); i++)
-                {
-                    sb.AppendLine(serives.ElementAt(i).GetDisplayText());
-                }
-                Result = sb.ToString();
-                return;
-            }
-            else
-            {
-                Result = "Введенный параметр не является числом";
-                return;
-            }
+            Result = sb.ToString();
         }
 
         private void PrintItems(Service[] items)
@@ -115,7 +74,7 @@ namespace EShop.Commands.CatalogCommands
             }
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             await Task.Run(() =>
             {

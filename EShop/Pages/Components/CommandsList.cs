@@ -30,12 +30,12 @@ namespace EShop.Pages.Components
             }
         }
 
-        public async Task DisplayAsync()
+        public async Task DisplayAsync(CancellationToken cancellationToken)
         {
             for (int i = 0; i < Commands.Count; i++)
             {
                 Console.Write($"{i + 1} - ");
-                await Commands[i].DisplayAsync();
+                await Commands[i].DisplayAsync(default);
             }
         }
     }

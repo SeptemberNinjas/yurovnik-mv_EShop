@@ -31,9 +31,19 @@ namespace DAL.Database
             return new ProductDatabaseRepository(_connectionString);
         }
 
+        public override IReadOnlyRepository<SaleItem> CreateSaleItemFactory()
+        {
+            return new SaleItemDatabaseRepository(_connectionString);
+        }
+
         public override IRepository<Service> CreateServiceFactory()
         {
             return new ServiceDatabaseRepository(_connectionString);
+        }
+
+        public override IRepository<Stock> CreateStockFactory()
+        {
+            return new StockDatabaseRepository(_connectionString);
         }
     }
 }
