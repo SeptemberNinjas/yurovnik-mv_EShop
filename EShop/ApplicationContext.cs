@@ -44,6 +44,7 @@ namespace EShop
                 .AddScoped<AddCartLineHandler>()
                 .AddScoped<GetCartHandler>()
                 .AddScoped<GetSaleItemHandler>()
+                .AddScoped<CreateOrderHandler>()
                 .AddScoped<DisplayProductsCommand>()
                 .AddScoped<DisplayServicesCommand>()
                 .AddScoped<AddProductToCartCommand>()

@@ -39,6 +39,11 @@ namespace DAL.Database
         public override IRepository<Service> CreateServiceFactory()
         {
             return new ServiceDatabaseRepository(_connectionString);
-        }       
+        }
+
+        public override IRepository<Stock> CreateStockFactory()
+        {
+            return new StockDatabaseRepository(_connectionString);
+        }
     }
 }

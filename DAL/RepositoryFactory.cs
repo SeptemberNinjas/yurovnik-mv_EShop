@@ -12,5 +12,7 @@ namespace DAL
         public abstract IRepository<Order> CreateOrderFactory();
 
         public abstract IReadOnlyRepository<SaleItem> CreateSaleItemFactory();
+
+        public abstract IRepository<Stock> CreateStockFactory();
     }
 }
